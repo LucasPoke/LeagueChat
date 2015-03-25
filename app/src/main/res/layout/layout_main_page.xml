@@ -1,0 +1,17 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    tools:context="com.spielpark.steve.leaguechat.mainpage.actMainPage$PlaceholderFragment"
+    android:background="@drawable/texture">
+
+    <ListView
+        android:id="@+id/friends_list"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_margin="5dp"
+        android:dividerHeight="3.0dp"
+        android:descendantFocusability="afterDescendants">
+
+        </ListView>
+</LinearLayout>
