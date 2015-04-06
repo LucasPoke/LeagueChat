@@ -34,6 +34,7 @@ import dto.Static.Info;
  */
 public class FriendsAdapter extends BaseAdapter {
     public static List<FriendInfo> infos;
+    public static int mSelected = -1;
     private Context context;
     private LayoutInflater inflater;
     public FriendsAdapter(Context ctx, List<FriendInfo> infos, LayoutInflater inflater) {
@@ -67,21 +68,21 @@ public class FriendsAdapter extends BaseAdapter {
         if (v == null) {
             v = inflater.inflate(R.layout.listview_friends_list, null);
         }
+        if (position == mSelected) {
+            v.setBackgroundColor(Color.argb(80, 222, 222, 222));
+        } else {
+            v.setBackgroundColor(Color.argb(47, 0, 124, 114));
+        }
         final FriendInfo curFriend = infos.get(position);
         ((ImageView)v.findViewById(R.id.fr_img_profile)).setImageResource(Util.getProfileIconId(curFriend.getProfIconID()));
+        ((ImageView)(v.findViewById(R.id.fr_img_chatico))).setImageResource(curFriend.isPendingMessage() ? R.drawable.chatico_pending : R.drawable.chatico);
         (v.findViewById(R.id.fr_img_chatico)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
-                v.setBackgroundColor(0x7030a0EE);
                 Intent intent = new Intent(context, actChatPage.class);
                 intent.putExtra("friendName", curFriend.getName());
+                curFriend.setPendingMessage(false);
                 context.startActivity(intent);
-                v.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        v.setBackgroundColor(0x00000000);
-                    }
-                }, 200);
             }
         });
         ((TextView)v.findViewById(R.id.fr_txt_name)).setText(curFriend.getName());
@@ -100,10 +101,19 @@ public class FriendsAdapter extends BaseAdapter {
 
     public void refreshInfos() {
         List<FriendInfo> newList = new ArrayList<>();
-        for (Friend f : ChatService.getOnlineFriends()) {
-            newList.add(new FriendInfo(f.getName(), f.getStatus().getStatusMessage(), f.getChatMode() == ChatMode.AWAY ? LolStatus.GameStatus.AWAY : f.getStatus().getGameStatus(), f.getStatus().getProfileIconId()));
+        List<String> pendingMessages = new ArrayList(15);
+        for (FriendInfo f : infos) {
+            if (f.isPendingMessage()) {
+                pendingMessages.add(f.getName());
+            }
         }
-        //Log.d("FriendsAdapter/refreshInfos", "Refreshing friends list~");
+        for (Friend f : ChatService.getOnlineFriends()) {
+            FriendInfo toAdd = new FriendInfo(f.getName(), f.getStatus().getStatusMessage(), f.getChatMode() == ChatMode.AWAY ? LolStatus.GameStatus.AWAY : f.getStatus().getGameStatus(), f.getStatus().getProfileIconId());
+            if (pendingMessages.contains(f.getName())) {
+                toAdd.setPendingMessage(true);
+            }
+            newList.add(toAdd);
+        }
         infos = newList;
         this.sort();
         ((Activity) context).runOnUiThread(new Runnable() {

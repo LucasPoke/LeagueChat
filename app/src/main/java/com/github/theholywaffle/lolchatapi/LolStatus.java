@@ -63,24 +63,31 @@ public class LolStatus {
         }
     }
     public enum Queue {
-        NONE,
-        NORMAL,
-        NORMAL_3x3,
-        ODIN_UNRANKED,
-        ARAM_UNRANKED_5x5,
-        BOT,
-        BOT_3x3,
-        RANKED_SOLO_5x5,
-        RANKED_TEAM_3x3,
-        RANKED_TEAM_5x5,
-        ONEFORALL_5x5,
-        FIRSTBLOOD_1x1,
-        FIRSTBLOOD_2x2,
-        SR_6x6,
-        CAP_5x5,
-        URF,
-        URF_BOT,
-        NIGHTMARE_BOT;
+        NONE("None"),
+        NORMAL("Normal"),
+        NORMAL_3x3("3v3"),
+        ODIN_UNRANKED("Dominion"),
+        ARAM_UNRANKED_5x5("ARAM"),
+        BOT("Bot"),
+        BOT_3x3("Bot(3v3)"),
+        RANKED_SOLO_5x5("Ranked"),
+        RANKED_TEAM_3x3("Ranked(3v3)"),
+        RANKED_TEAM_5x5("Ranked5's"),
+        ONEFORALL_5x5("One For All"),
+        FIRSTBLOOD_1x1("FirstBlood"),
+        FIRSTBLOOD_2x2("FirstBlood(2v2)"),
+        SR_6x6("Hexakill"),
+        CAP_5x5("TeamBuilder"),
+        URF("URF"),
+        URF_BOT("URFvsAI"),
+        NIGHTMARE_BOT("Nightmare Bots");
+        private String desc;
+        Queue(String desc) {
+            this.desc = desc;
+        }
+        public String desc() {
+            return desc;
+        }
     }
     public enum Tier {
         UNRANKED,
@@ -182,8 +189,18 @@ public class LolStatus {
     public String getFeaturedGameData() {
         return get(XMLProperty.featuredGameData);
     }
-    public String getGameQueueType() {
-        return get(XMLProperty.gameQueueType);
+    public Queue getGameQueueType() {
+        final String type = get(XMLProperty.gameQueueType);
+        if (!type.isEmpty()) {
+            for (final Queue s : Queue.values()) {
+                if (s.name().equals(type)) {
+                    return s;
+                }
+            }
+            System.err
+                    .println("GameStatus " + type + " not implemented yet!");
+        }
+        return Queue.NONE;
     }
     public GameStatus getGameStatus() {
         final String status = get(XMLProperty.gameStatus);

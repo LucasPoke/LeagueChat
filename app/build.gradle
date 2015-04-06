@@ -32,4 +32,5 @@ dependencies {
     compile 'com.google.code.gson:gson:2.3.1'
     compile files('libs/riot-api-java.jar')
     compile 'org.apache.commons:commons-lang3:3.3.2'
+    compile 'com.makeramen:roundedimageview:2.0.1'
 }

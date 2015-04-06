@@ -13,6 +13,7 @@ public class FriendInfo {
     private String name;
     private LolStatus.GameStatus gameStatus;
     private int profIconID;
+    private boolean pendingMessage;
 
     public FriendInfo(String name) {
         this.name = name;
@@ -22,8 +23,8 @@ public class FriendInfo {
         this.status = status;
         this.name = name;
         this.gameStatus = inGame;
-
         this.profIconID = profIconID;
+        this.pendingMessage = false;
     }
 
     public int getProfIconID() {
@@ -58,4 +59,11 @@ public class FriendInfo {
         this.gameStatus = inGame;
     }
 
+    public boolean isPendingMessage() {
+        return pendingMessage;
+    }
+
+    public void setPendingMessage(boolean b) {
+        this.pendingMessage = b;
+    }
 }

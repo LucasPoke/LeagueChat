@@ -58,6 +58,13 @@ public class actChatPage extends ListActivity {
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        mAdapter.notifyDataSetChanged();
+        Log.d("actChatPage/onPause", "Went back..");
+    }
+
+    @Override
     protected void onStop() {
         super.onStop();
         LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);

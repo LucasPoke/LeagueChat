@@ -6,18 +6,27 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
+import android.graphics.LinearGradient;
+import android.graphics.Shader;
+import android.graphics.Typeface;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.github.theholywaffle.lolchatapi.LoLChat;
+import com.github.theholywaffle.lolchatapi.LolStatus;
 import com.github.theholywaffle.lolchatapi.listeners.ChatListener;
 import com.github.theholywaffle.lolchatapi.listeners.FriendListener;
 import com.github.theholywaffle.lolchatapi.wrapper.Friend;
@@ -29,6 +38,7 @@ import com.spielpark.steve.leaguechat.mainpage.friendinfo.FriendInfo;
 import com.spielpark.steve.leaguechat.mainpage.friendinfo.FriendsAdapter;
 import com.spielpark.steve.leaguechat.mainpage.friendinfo.FriendsInfoTask;
 import com.spielpark.steve.leaguechat.service.ChatService;
+import com.spielpark.steve.leaguechat.util.Util;
 
 import java.security.Timestamp;
 import java.text.SimpleDateFormat;
@@ -55,6 +65,7 @@ public class actMainPage extends ActionBarActivity {
             setUpRefresh();
             db = MessageDB.getInstance(this);
         }
+        findViewById(R.id.info_view).setVisibility(View.GONE);
     }
 
     @Override
@@ -120,12 +131,112 @@ public class actMainPage extends ActionBarActivity {
                 Log.d("actMainPage/setUpFriendsList", "Friend Object: " + ChatService.getFriendByName(mAdapter.getItem(position).getName()).getStatus());
                 Log.d("Gametime", "Game Time: " + new SimpleDateFormat("mmm:ss").format(ChatService.getFriendByName(mAdapter.getItem(position).getName()).getStatus().getGameTime()));
                 Log.d("Skin", "Skin: " + ChatService.getFriendByName(mAdapter.getItem(position).getName()).getStatus().getSkin());
+                actMainPage.this.displayExtendedInfo(ChatService.getFriendByName(mAdapter.getInfo().get(position).getName()));
+                FriendsAdapter.mSelected = (position == FriendsAdapter.mSelected ? -1 : position);
+                mAdapter.notifyDataSetChanged();
             }
         });
         FriendsInfoTask loadFriendsTask = new FriendsInfoTask(friendsList, this, LayoutInflater.from(this));
         loadFriendsTask.execute();
     }
 
+    private void displayExtendedInfo(Friend f) {
+        LolStatus status = f.getStatus();
+        TextView fName = (TextView)findViewById(R.id.info_Name);
+        if (f.getName().equals(fName.getText().toString())) {
+            findViewById(R.id.info_view).setVisibility(View.GONE);
+            fName.setText("");
+            return;
+        }
+        TextView divName = (TextView)findViewById(R.id.info_division);
+        TextView tier = (TextView)findViewById(R.id.info_league_tier);
+        TextView time = (TextView)findViewById(R.id.info_game_time);
+        TextView gameType = (TextView)findViewById(R.id.info_game_type);
+        TextView lastPlayed = (TextView)findViewById(R.id.info_last_played);
+        TextView rankedWins = (TextView)findViewById(R.id.info_ranked_wins);
+        TextView normalWins = (TextView)findViewById(R.id.info_normal_wins);
+        TextView playingAs = (TextView)findViewById(R.id.info_last_played_header);
+        ImageView championPic = (ImageView)findViewById(R.id.info_champion_pic);
+        ImageView leaguePic = (ImageView)findViewById(R.id.info_league_image);
+        ImageView profPic = (ImageView)findViewById(R.id.info_profile_pic);
+        String championPicSrc = status.getSkin().equals("") ? "N/A" : status.getSkin();
+        String league = status.getRankedLeagueTier().name().equals("UNRANKED") ? "wood" : status.getRankedLeagueTier().name().toLowerCase();
+        String division  = status.getRankedLeagueDivision().name().equals("NONE") ? "V" : status.getRankedLeagueDivision().name();
+        boolean inGame = ! (status.getGameStatus().internal().equals("outOfGame"));
+        fName.setText(f.getName());
+        divName.setText(status.getRankedLeagueName());
+        tier.setText(league.substring(0, 1).toUpperCase() + league.substring(1) + " " + division);
+        tier.getPaint().setShader(actMainPage.this.getTierGraphics(league));
+        rankedWins.setText(Html.fromHtml("Ranked Wins: <b>" + String.valueOf(status.getRankedWins()) + "</b>"));
+        normalWins.setText(Html.fromHtml("Normal Wins: <b>" + String.valueOf(status.getNormalWins()) +"</b>"));
+        playingAs.setText(inGame ? "Playing as" : "Last played");
+        championPic.setImageResource(getImageId(this, championPicSrc.toLowerCase()));
+        time.setText(Html.fromHtml("Time: <b>" + (inGame ? new SimpleDateFormat("mm:ss").format(status.getGameTime()) + "</b>" : "00:00")));
+        gameType.setText(Html.fromHtml("Type: <b>" + status.getGameQueueType().desc() + "</b>"));
+        lastPlayed.setText(championPicSrc);
+        leaguePic.setImageResource(getImageId(this, league));
+        profPic.setImageResource(Util.getProfileIconId(status.getProfileIconId()));
+        findViewById(R.id.info_view).setVisibility(View.VISIBLE);
+    }
+
+    private Shader getTierGraphics(String tier) {
+        Shader shader;
+        switch(tier) {
+            case "wood": {
+                shader = new LinearGradient(20, 0, 220, 40,
+                        new int[]{Color.rgb(100, 65, 32), Color.rgb(168, 119, 13)}, null, Shader.TileMode.MIRROR);
+                break;
+            }
+            case "bronze": {
+                shader = new LinearGradient(20, 0, 220, 40,
+                        new int[]{Color.rgb(106, 73, 27), Color.rgb(117, 51, 1)}, null, Shader.TileMode.MIRROR);
+                break;
+            }
+            case "silver" : {
+                shader = new LinearGradient(20, 0, 220, 40,
+                        new int[]{Color.rgb(170, 188, 177), Color.rgb(85, 100, 82)}, null, Shader.TileMode.MIRROR);
+                break;
+            }
+            case "gold" : {
+                shader = new LinearGradient(20, 0, 220, 40,
+                        new int[]{Color.rgb(238, 213, 104), Color.rgb(168, 120, 73)}, null, Shader.TileMode.MIRROR);
+                break;
+            }
+            case "platinum" : {
+                shader = new LinearGradient(20, 0, 220, 40,
+                        new int[]{Color.rgb(131, 223, 189), Color.rgb(49, 148, 125)}, null, Shader.TileMode.MIRROR);
+                break;
+            }
+            case "diamond" : {
+                shader = new LinearGradient(20, 0, 220, 40,
+                        new int[]{Color.rgb(130, 208, 249), Color.rgb(235, 208, 169), Color.rgb(39, 89, 167), Color.rgb(191, 209, 186)},
+                        null, Shader.TileMode.MIRROR);
+                break;
+            }
+            case "master" : {
+                shader = new LinearGradient(20, 0, 220, 40,
+                        new int[]{Color.rgb(113, 130, 124), Color.rgb(160, 236, 225), Color.rgb(249, 226, 115), Color.rgb(17, 166, 156)},
+                        null, Shader.TileMode.MIRROR);
+                break;
+            }
+            case "challenger" : {
+                shader = new LinearGradient(20, 0, 220, 40,
+                        new int[]{Color.rgb(191, 150, 68), Color.rgb(255, 231, 126), Color.rgb(128, 238, 238), Color.rgb(255, 231, 117)},
+                        null, Shader.TileMode.MIRROR);
+                break;
+            }
+            default: {
+                shader = new LinearGradient(20, 0, 220, 40,
+                        new int[]{Color.rgb(100, 65, 32), Color.rgb(168, 119, 13)},
+                        new float[]{0, 1}, Shader.TileMode.MIRROR);
+                break;            }
+        }
+        return shader;
+    }
+
+    private int getImageId(Context context, String imageName) {
+        return context.getResources().getIdentifier("drawable/" + imageName, null, context.getPackageName());
+    }
     private void updateFriend(Friend f, String type) {
         if (f != null) {
             //Log.d("actMainPage/updateFriend", "Name: " + f.getName() + "..Type: " + type);
@@ -158,8 +269,13 @@ public class actMainPage extends ActionBarActivity {
         cv.put(MessageDB.TableEntry.COLUMN_FROM, from);
         cv.put(MessageDB.TableEntry.COLUMN_MESSAGE, message);
         write.insert(MessageDB.TableEntry.TABLE_NAME, null, cv);
-        Log.d("actMainPage/receiveMessage", "Message received: " + message);
         db.close();
+        for (FriendInfo inf : mAdapter.getInfo()) {
+            if (inf.getName().equals(from) && !(inf.isPendingMessage())) {
+                inf.setPendingMessage(true);
+            }
+        }
+        mAdapter.notifyDataSetChanged();
     }
 
     private class ChatReceiver extends BroadcastReceiver {

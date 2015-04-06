@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="75dp"
+    android:layout_height="match_parent"
     android:layout_margin="4dp"
     android:background="#2f007C72">
 
@@ -12,44 +11,45 @@
         android:layout_width="64dp"
         android:layout_height="64dp"
         android:src="@drawable/profile_pic9"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="7dp"/>
-    <LinearLayout
-        android:layout_width="200dp"
-        android:layout_height="70dp"
-        android:layout_margin="7dp"
-        android:orientation="vertical">
+        android:layout_margin="6dp"/>
 
-        <TextView
-            android:id="@+id/fr_txt_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="#FFFFFF"
-            android:text="Noxian Mercenary"
-            android:textSize="17sp"
-            android:textStyle="bold"/>
-        <TextView
-            android:id="@+id/fr_txt_status"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="#FFFFFF"
-            android:text="Owning Bitches"
-            android:textSize="17sp"
-            android:textStyle="italic"/>
-        <TextView
-            android:id="@+id/fr_txt_ingame"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="#51E047"
-            android:text="Online"
-            android:textSize="17sp"/>
+    <TextView
+        android:id="@+id/fr_txt_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/fr_img_profile"
+        android:layout_marginBottom="2dp"
+        android:layout_marginTop="2dp"
+        android:textColor="#FFFFFF"
+        android:text="Noxian Mercenary"
+        android:textSize="16sp"
+        android:textStyle="bold"/>
+    <TextView
+        android:id="@+id/fr_txt_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/fr_img_profile"
+        android:layout_below="@+id/fr_txt_name"
+        android:layout_marginBottom="2dp"
+        android:textColor="#FFFFFF"
+        android:text="Owning Bitches"
+        android:textSize="16sp"
+        android:textStyle="italic"/>
+    <TextView
+        android:id="@+id/fr_txt_ingame"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/fr_img_profile"
+        android:layout_below="@+id/fr_txt_status"
+        android:textColor="#51E047"
+        android:text="Online"
+        android:textSize="16sp"/>
 
-        </LinearLayout>
     <ImageView
         android:id="@+id/fr_img_chatico"
         android:layout_width="58dp"
         android:layout_height="58dp"
-        android:layout_marginTop="10dp"
-        android:padding="5dp"
+        android:layout_alignParentRight="true"
+        android:layout_margin="6dp"
         android:src="@drawable/chatico"/>
-</LinearLayout>
+</RelativeLayout>

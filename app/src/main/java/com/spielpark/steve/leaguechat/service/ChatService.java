@@ -46,6 +46,7 @@ public class ChatService extends IntentService {
         switch(intent.getAction()) {
             case "DO_LOGIN" : {
                 handleLogin(intent.getExtras().getString("username"), intent.getExtras().getCharArray("password"));
+                intent.getExtras().remove("password");
                 break;
             }
             case "DO_LOGOUT" : {
@@ -192,6 +193,7 @@ public class ChatService extends IntentService {
                 return null;
             }
         }.execute();
+
     }
 
     public void sendBroadcast(String action, String... messages) {

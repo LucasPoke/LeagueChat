@@ -29,12 +29,8 @@ public class ChatAdapter extends CursorAdapter {
 
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
-        if (view == null) {
-            Log.d("ChatAdapter/bindView", "View is null at position: " + cursor.getPosition());
-        }
         String from = cursor.getString(cursor.getColumnIndex(MessageDB.TableEntry.COLUMN_FROM));
         String message = cursor.getString(cursor.getColumnIndex(MessageDB.TableEntry.COLUMN_MESSAGE));
-        Log.d("ChatAdapter/bindView", "Cursor at pos: " + cursor.getPosition() + "..From: " + from + "..Message: " + message);
         TextView chat;
         if (from.equalsIgnoreCase(ChatService.getUserName())) {
             chat = (TextView) view.findViewById(R.id.rightChat);
@@ -49,7 +45,6 @@ public class ChatAdapter extends CursorAdapter {
 
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
-        Log.d("ChatAdapter/newView", "newView called at position: " + cursor.getPosition());
         return mInflater.inflate(R.layout.listview_friends_chat, parent, false);
     }
 
