@@ -60,8 +60,6 @@ public class actChatPage extends ListActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        mAdapter.notifyDataSetChanged();
-        Log.d("actChatPage/onPause", "Went back..");
     }
 
     @Override

@@ -48,7 +48,7 @@
             android:textStyle="bold"
             android:id="@+id/info_Name"
             android:layout_marginLeft="8dp"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="8dp"
             android:layout_toRightOf="@+id/info_profile_pic"
             />
 
