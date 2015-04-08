@@ -36,7 +36,7 @@ public class MessageDB extends SQLiteOpenHelper {
         }
     }
 
-    public static SQLiteDatabase openDB() {
+    public SQLiteDatabase openDB() {
         mOpenCounter++;
         if (mOpenCounter == 1) {
             db = mInstance.getWritableDatabase();
@@ -44,7 +44,7 @@ public class MessageDB extends SQLiteOpenHelper {
         return db;
     }
 
-    public static void closeDB() {
+    public void closeDB() {
         mOpenCounter--;
         if (mOpenCounter == 0) {
             db.close();

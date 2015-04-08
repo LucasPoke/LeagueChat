@@ -2,9 +2,12 @@ package com.spielpark.steve.leaguechat.service;
 
 import android.app.IntentService;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
+import android.os.Message;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
@@ -83,6 +86,23 @@ public class ChatService extends IntentService {
         }
     }
 
+    private void receiveMessage(String from, String message) {
+        MessageDB db = MessageDB.getInstance(this);
+        SQLiteDatabase write = db.openDB();
+        ContentValues cv = new ContentValues();
+        cv.put(MessageDB.TableEntry.COLUMN_TO, ChatService.getUserName());
+        cv.put(MessageDB.TableEntry.COLUMN_FROM, from);
+        cv.put(MessageDB.TableEntry.COLUMN_MESSAGE, message);
+        write.insert(MessageDB.TableEntry.TABLE_NAME, null, cv);
+        Log.d("receiveMessage/ChatService", "Wrote message to DB: " + message);
+    }
+
+    public static Cursor queryDB(String fName, Context ctx) {
+        String[] args = new String[] {fName, fName};
+        SQLiteDatabase dBase = MessageDB.getInstance(ctx).getWritableDatabase();
+        return dBase.query(MessageDB.TableEntry.TABLE_NAME, null, "_from LIKE ? OR _to LIKE ? COLLATE NOCASE", args, null, null, null, null);
+    }
+
     private void setUpChatlistener() {
         if (api == null) {
             throw new NullPointerException("API has not been initialized.");
@@ -91,6 +111,7 @@ public class ChatService extends IntentService {
             @Override
             public void onMessage(Friend friend, String message) {
                 sendBroadcast("message_received", friend.getName(), message);
+                receiveMessage(friend.getName(), message);
             }
         });
     }

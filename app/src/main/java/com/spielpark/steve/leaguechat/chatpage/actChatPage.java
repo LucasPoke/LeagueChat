@@ -39,7 +39,7 @@ public class actChatPage extends ListActivity {
         }
         db = MessageDB.getInstance(this);
         friendName = getIntent().getExtras().getString("friendName");
-        cursor = getCursor();
+        cursor = ChatService.queryDB(friendName, this);
         mAdapter = new ChatAdapter(this, cursor, 0);
         setListAdapter(mAdapter);
         setUpReceiver();
@@ -55,6 +55,11 @@ public class actChatPage extends ListActivity {
                 }, 200);
             }
         });
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
     }
 
     @Override
@@ -86,24 +91,16 @@ public class actChatPage extends ListActivity {
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filter);
     }
 
-    private Cursor getCursor() {
-        String[] args = new String[] {friendName, friendName};
-        SQLiteDatabase dBase = db.getWritableDatabase();
-        cursor = dBase.query(MessageDB.TableEntry.TABLE_NAME, null, "_from LIKE ? OR _to LIKE ? COLLATE NOCASE", args, null, null, null, null);
-        return cursor;
-    }
-
     private void receiveMessage(String from, String message) {
-        SQLiteDatabase write = db.getWritableDatabase();
+        /*SQLiteDatabase write = db.openDB();
         ContentValues cv = new ContentValues();
         cv.put(MessageDB.TableEntry.COLUMN_TO, ChatService.getUserName());
         cv.put(MessageDB.TableEntry.COLUMN_FROM, from);
         cv.put(MessageDB.TableEntry.COLUMN_MESSAGE, message);
         write.insert(MessageDB.TableEntry.TABLE_NAME, null, cv);
-        db.close();
-        mAdapter.swapCursor(getCursor());
+        db.closeDB();
+        */mAdapter.swapCursor(ChatService.queryDB(friendName, this));
         mAdapter.notifyDataSetChanged();
-        Log.d("actChatPage/receiveMessage", "Message received: " + message);
         getListView().smoothScrollToPosition(mAdapter.getCount());
     }
 
@@ -115,13 +112,12 @@ public class actChatPage extends ListActivity {
         cv.put(MessageDB.TableEntry.COLUMN_TO, friendName);
         cv.put(MessageDB.TableEntry.COLUMN_MESSAGE, msg);
         db.getWritableDatabase().insert(MessageDB.TableEntry.TABLE_NAME, null, cv);
-        db.close();
         Intent intent = new Intent(this, ChatService.class);
         intent.setAction("SEND_MESSAGE");
         intent.putExtra("friendName", friendName);
         intent.putExtra("message", msg);
         startService(intent);
-        mAdapter.swapCursor(getCursor());
+        mAdapter.swapCursor(ChatService.queryDB(friendName, this));
         mAdapter.notifyDataSetChanged();
         getListView().smoothScrollToPosition(mAdapter.getCount());
     }

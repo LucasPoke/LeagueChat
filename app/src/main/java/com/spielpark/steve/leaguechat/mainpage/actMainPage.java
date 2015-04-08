@@ -209,14 +209,14 @@ public class actMainPage extends ActionBarActivity {
     }
 
     private void receiveMessage(String from, String message) {
-        SQLiteDatabase write = db.getWritableDatabase();
+        /*SQLiteDatabase write = db.openDB();
         ContentValues cv = new ContentValues();
         cv.put(MessageDB.TableEntry.COLUMN_TO, ChatService.getUserName());
         cv.put(MessageDB.TableEntry.COLUMN_FROM, from);
         cv.put(MessageDB.TableEntry.COLUMN_MESSAGE, message);
         write.insert(MessageDB.TableEntry.TABLE_NAME, null, cv);
-        db.close();
-        for (FriendInfo inf : mAdapter.getInfo()) {
+        db.closeDB();
+        */for (FriendInfo inf : mAdapter.getInfo()) {
             if (inf.getName().equals(from) && !(inf.isPendingMessage())) {
                 inf.setPendingMessage(true);
             }
