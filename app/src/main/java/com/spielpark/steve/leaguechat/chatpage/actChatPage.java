@@ -58,16 +58,6 @@ public class actChatPage extends ListActivity {
     }
 
     @Override
-    protected void onRestart() {
-        super.onRestart();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-    }
-
-    @Override
     protected void onStop() {
         super.onStop();
         LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
@@ -91,15 +81,8 @@ public class actChatPage extends ListActivity {
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filter);
     }
 
-    private void receiveMessage(String from, String message) {
-        /*SQLiteDatabase write = db.openDB();
-        ContentValues cv = new ContentValues();
-        cv.put(MessageDB.TableEntry.COLUMN_TO, ChatService.getUserName());
-        cv.put(MessageDB.TableEntry.COLUMN_FROM, from);
-        cv.put(MessageDB.TableEntry.COLUMN_MESSAGE, message);
-        write.insert(MessageDB.TableEntry.TABLE_NAME, null, cv);
-        db.closeDB();
-        */mAdapter.swapCursor(ChatService.queryDB(friendName, this));
+    private void receiveMessage() {
+        mAdapter.swapCursor(ChatService.queryDB(friendName, this));
         mAdapter.notifyDataSetChanged();
         getListView().smoothScrollToPosition(mAdapter.getCount());
     }
@@ -132,7 +115,7 @@ public class actChatPage extends ListActivity {
                     break;
                 }
                 case "message_received" : {
-                    receiveMessage(intent.getExtras().getString("arg0"), intent.getExtras().getString("arg1"));
+                    receiveMessage();
                     break;
                 }
                 case "friend_request" : {

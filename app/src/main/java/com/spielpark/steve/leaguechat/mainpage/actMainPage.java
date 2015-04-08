@@ -69,17 +69,7 @@ public class actMainPage extends ActionBarActivity {
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-        if (mReceiverActive) LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
-        receiver = null;
-        if (mRefreshActive) refresher.shutdown();
-        mRefreshActive = false;
-        mReceiverActive = false;
-    }
-
-    @Override
-    protected void onResume() {
+    protected void onRestart() {
         super.onResume();
         if (mAdapter != null) mAdapter.notifyDataSetChanged();
         if(!mRefreshActive) setUpRefresh();
@@ -208,15 +198,8 @@ public class actMainPage extends ActionBarActivity {
         }
     }
 
-    private void receiveMessage(String from, String message) {
-        /*SQLiteDatabase write = db.openDB();
-        ContentValues cv = new ContentValues();
-        cv.put(MessageDB.TableEntry.COLUMN_TO, ChatService.getUserName());
-        cv.put(MessageDB.TableEntry.COLUMN_FROM, from);
-        cv.put(MessageDB.TableEntry.COLUMN_MESSAGE, message);
-        write.insert(MessageDB.TableEntry.TABLE_NAME, null, cv);
-        db.closeDB();
-        */for (FriendInfo inf : mAdapter.getInfo()) {
+    private void receiveMessage(String from) {
+        for (FriendInfo inf : mAdapter.getInfo()) {
             if (inf.getName().equals(from) && !(inf.isPendingMessage())) {
                 inf.setPendingMessage(true);
             }
@@ -235,7 +218,7 @@ public class actMainPage extends ActionBarActivity {
                     break;
                 }
                 case "message_received" : {
-                    receiveMessage(intent.getExtras().getString("arg0"), intent.getExtras().getString("arg1"));
+                    receiveMessage(intent.getExtras().getString("arg0"));
                     break;
                 }
                 case "friend_request" : {
