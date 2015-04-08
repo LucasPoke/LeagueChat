@@ -1,6 +1,8 @@
 package com.spielpark.steve.leaguechat.service;
 
 import android.app.IntentService;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -8,6 +10,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Message;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
@@ -16,7 +20,9 @@ import com.github.theholywaffle.lolchatapi.LoLChat;
 import com.github.theholywaffle.lolchatapi.listeners.ChatListener;
 import com.github.theholywaffle.lolchatapi.listeners.FriendListener;
 import com.github.theholywaffle.lolchatapi.wrapper.Friend;
+import com.spielpark.steve.leaguechat.R;
 import com.spielpark.steve.leaguechat.chatpage.MessageDB;
+import com.spielpark.steve.leaguechat.chatpage.actChatPage;
 import com.spielpark.steve.leaguechat.mainpage.actMainPage;
 import com.spielpark.steve.leaguechat.mainpage.friendinfo.FriendsAdapter;
 
@@ -32,13 +38,19 @@ import java.util.List;
  * helper methods.
  */
 public class ChatService extends IntentService {
-
+    private final int mNotificationID = 256;
     private static LoLChat api;
     private static String userName;
     public static Friend updated;
     public static Friend updated2;
     public ChatService() {
         super(ChatService.class.getName());
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        MessageDB.getInstance(this).close();
     }
 
     @Override
@@ -95,6 +107,23 @@ public class ChatService extends IntentService {
         cv.put(MessageDB.TableEntry.COLUMN_MESSAGE, message);
         write.insert(MessageDB.TableEntry.TABLE_NAME, null, cv);
         Log.d("receiveMessage/ChatService", "Wrote message to DB: " + message);
+        makeNotification(from, message);
+    }
+
+    private void makeNotification(String from, String message) {
+        Intent intent = new Intent(this, actChatPage.class);
+        intent.putExtra("friendName", from);
+        TaskStackBuilder stack = TaskStackBuilder.create(this);
+        stack.addNextIntent(intent);
+        stack.addParentStack(actMainPage.class);
+        PendingIntent pIntent = stack.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+        NotificationCompat.Builder bldr = new NotificationCompat.Builder(this)
+                .setAutoCancel(true)
+                .setContentTitle("Msg From " + from)
+                .setContentText(message.length() > 30 ? message.substring(0, 29) + "..." : message)
+                .setSmallIcon(R.drawable.chatico_pending)
+                .setContentIntent(pIntent);
+        ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).notify(mNotificationID, bldr.build());
     }
 
     public static Cursor queryDB(String fName, Context ctx) {
@@ -110,7 +139,7 @@ public class ChatService extends IntentService {
         api.addChatListener(new ChatListener() {
             @Override
             public void onMessage(Friend friend, String message) {
-                sendBroadcast("message_received", friend.getName(), message);
+                sendBroadcast("message_received", friend.getName());
                 receiveMessage(friend.getName(), message);
             }
         });
