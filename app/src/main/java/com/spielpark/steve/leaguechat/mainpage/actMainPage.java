@@ -77,6 +77,7 @@ public class actMainPage extends ActionBarActivity {
         if (mAdapter != null) mAdapter.notifyDataSetChanged();
         if(!mRefreshActive) setUpRefresh();
         if(!mReceiverActive) setUpReceiver();
+        mAdapter.refreshInfos();
     }
 
     @Override
@@ -225,16 +226,6 @@ public class actMainPage extends ActionBarActivity {
         }
     }
 
-    private void receiveMessage(String from) {
-        for (FriendInfo inf : mAdapter.getInfo()) {
-            if (inf.getName().equals(from) && !(inf.isPendingMessage())) {
-                Log.d("aMP/receiveMessage", "Pending message for: " + from);
-                inf.setPendingMessage(true);
-            }
-        }
-        mAdapter.notifyDataSetChanged();
-    }
-
     private class ChatReceiver extends BroadcastReceiver {
         public void onReceive(Context context, Intent intent) {
             switch(intent.getAction()) {
@@ -247,7 +238,7 @@ public class actMainPage extends ActionBarActivity {
                 }
                 case "message_received" : {
                     Log.d("aMP/receiveMessage", "Received Message From: " + intent.getExtras().getString("arg0"));
-                    receiveMessage(intent.getExtras().getString("arg0"));
+                    //receiveMessage(intent.getExtras().getString("arg0"));
                     break;
                 }
                 case "friend_request" : {

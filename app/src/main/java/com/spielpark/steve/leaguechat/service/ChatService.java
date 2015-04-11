@@ -24,6 +24,7 @@ import com.spielpark.steve.leaguechat.R;
 import com.spielpark.steve.leaguechat.chatpage.MessageDB;
 import com.spielpark.steve.leaguechat.chatpage.actChatPage;
 import com.spielpark.steve.leaguechat.mainpage.actMainPage;
+import com.spielpark.steve.leaguechat.mainpage.friendinfo.FriendInfo;
 import com.spielpark.steve.leaguechat.mainpage.friendinfo.FriendsAdapter;
 
 import org.jivesoftware.smack.SmackException;
@@ -113,10 +114,18 @@ public class ChatService extends IntentService {
         cv.put(MessageDB.TableEntry.COLUMN_MESSAGE, message);
         write.insert(MessageDB.TableEntry.TABLE_NAME, null, cv);
         makeNotification(from, message);
+        for (FriendInfo inf : actMainPage.mAdapter.getInfo()) {
+            if (inf.getName().equals(from) && !(inf.isPendingMessage())) {
+                Log.d("aMP/receiveMessage", "Pending message for: " + from);
+                inf.setPendingMessage(true);
+            }
+        }
+        actMainPage.mAdapter.notifyDataSetChanged();
     }
 
     private void makeNotification(String from, String message) {
         if (pendingFriends.toString().equals(from)) pendingFriends.setLength(0);
+        if (pendingFriends.toString().contains(from)) return;
         boolean multiple = pendingFriends.length() > 0;
         Intent intent = new Intent(this, multiple ? actMainPage.class : actChatPage.class);
         if (multiple)
