@@ -41,6 +41,7 @@ public class ChatService extends IntentService {
     private final int mNotificationID = 256;
     private static LoLChat api;
     private static String userName;
+    public static StringBuilder pendingFriends = new StringBuilder();
     public static Friend updated;
     public static Friend updated2;
     public ChatService() {
@@ -70,6 +71,11 @@ public class ChatService extends IntentService {
             }
             case "SEND_MESSAGE" : {
                 sendMessage(intent.getExtras().getString("friendName"), intent.getExtras().getString("message"));
+                break;
+            }
+            case "NOTIFICATION_REMOVED" : {
+                pendingFriends.setLength(0);
+                Log.d("ChSrv/onHandleIntent", "Notification cleared by user.");
             }
         }
     }
@@ -100,29 +106,37 @@ public class ChatService extends IntentService {
 
     private void receiveMessage(String from, String message) {
         MessageDB db = MessageDB.getInstance(this);
-        SQLiteDatabase write = db.openDB();
+        SQLiteDatabase write = db.getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put(MessageDB.TableEntry.COLUMN_TO, ChatService.getUserName());
         cv.put(MessageDB.TableEntry.COLUMN_FROM, from);
         cv.put(MessageDB.TableEntry.COLUMN_MESSAGE, message);
         write.insert(MessageDB.TableEntry.TABLE_NAME, null, cv);
-        Log.d("receiveMessage/ChatService", "Wrote message to DB: " + message);
         makeNotification(from, message);
     }
 
     private void makeNotification(String from, String message) {
-        Intent intent = new Intent(this, actChatPage.class);
-        intent.putExtra("friendName", from);
+        if (pendingFriends.toString().equals(from)) pendingFriends.setLength(0);
+        boolean multiple = pendingFriends.length() > 0;
+        Intent intent = new Intent(this, multiple ? actMainPage.class : actChatPage.class);
+        if (multiple)
+            intent.putExtra("friendName", from);
         TaskStackBuilder stack = TaskStackBuilder.create(this);
+        stack.addParentStack(multiple ? actMainPage.class : actChatPage.class);
         stack.addNextIntent(intent);
-        stack.addParentStack(actMainPage.class);
-        PendingIntent pIntent = stack.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pIntent = stack.getPendingIntent(0, PendingIntent.FLAG_CANCEL_CURRENT);
+        Intent broadcastIntent = new Intent(this, ChatService.class);
+        broadcastIntent.setAction("NOTIFICATION_REMOVED");
+        PendingIntent pIntentBroadcast = PendingIntent.getService(this, 512, broadcastIntent,PendingIntent.FLAG_UPDATE_CURRENT);
         NotificationCompat.Builder bldr = new NotificationCompat.Builder(this)
                 .setAutoCancel(true)
-                .setContentTitle("Msg From " + from)
-                .setContentText(message.length() > 30 ? message.substring(0, 29) + "..." : message)
+                .setContentText(multiple ? pendingFriends.append(", " + from).toString() : message.length() > 30 ? message.substring(0, 29) + "..." : message)
+                .setContentTitle(multiple ? "Multiple Messages" : "Message From: " + pendingFriends.append(from).toString())
                 .setSmallIcon(R.drawable.chatico_pending)
-                .setContentIntent(pIntent);
+                .setContentIntent(pIntent)
+                .setLights(0xDDE5531F, 100, 2000)
+                .setTicker(from)
+                .setDeleteIntent(pIntentBroadcast);
         ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).notify(mNotificationID, bldr.build());
     }
 

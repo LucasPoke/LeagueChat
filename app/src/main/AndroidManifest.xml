@@ -17,7 +17,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".actLogin_transition" >
+        <activity
+            android:name=".actLogin_transition"
+            android:parentActivityName=".actLogin">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.spielpark.steve.leaguechat.mainpage.actMainPage">
+            </meta-data>
         </activity>
         <activity
             android:name=".mainpage.actMainPage"
@@ -31,7 +37,8 @@
             android:name=".chatpage.actChatPage"
             android:label="@string/title_activity_chat"
             android:parentActivityName=".mainpage.actMainPage"
-            android:theme="@style/Base.ThemeOverlay.AppCompat.Dark.ActionBar">
+            android:theme="@style/Base.ThemeOverlay.AppCompat.Dark.ActionBar"
+            android:exported="true">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.spielpark.steve.leaguechat.mainpage.actMainPage" />

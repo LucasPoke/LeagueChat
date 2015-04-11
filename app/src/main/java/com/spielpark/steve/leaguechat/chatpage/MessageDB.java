@@ -10,7 +10,6 @@ import android.util.Log;
  * Created by Steve on 2/6/2015.
  */
 public class MessageDB extends SQLiteOpenHelper {
-    private static int mOpenCounter = 0;
 
     private static MessageDB mInstance;
     private static SQLiteDatabase db;
@@ -33,21 +32,6 @@ public class MessageDB extends SQLiteOpenHelper {
             return mInstance;
         } else {
             return mInstance;
-        }
-    }
-
-    public SQLiteDatabase openDB() {
-        mOpenCounter++;
-        if (mOpenCounter == 1) {
-            db = mInstance.getWritableDatabase();
-        }
-        return db;
-    }
-
-    public void closeDB() {
-        mOpenCounter--;
-        if (mOpenCounter == 0) {
-            db.close();
         }
     }
 

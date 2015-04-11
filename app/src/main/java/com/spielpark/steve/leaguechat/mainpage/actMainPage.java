@@ -201,6 +201,7 @@ public class actMainPage extends ActionBarActivity {
     private void receiveMessage(String from) {
         for (FriendInfo inf : mAdapter.getInfo()) {
             if (inf.getName().equals(from) && !(inf.isPendingMessage())) {
+                Log.d("aMP/receiveMessage", "Pending message for: " + from);
                 inf.setPendingMessage(true);
             }
         }
@@ -218,6 +219,7 @@ public class actMainPage extends ActionBarActivity {
                     break;
                 }
                 case "message_received" : {
+                    Log.d("aMP/receiveMessage", "Received Message From: " + intent.getExtras().getString("arg0"));
                     receiveMessage(intent.getExtras().getString("arg0"));
                     break;
                 }
