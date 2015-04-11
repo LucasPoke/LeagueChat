@@ -89,6 +89,7 @@ public class actChatPage extends ListActivity {
 
     public void sendMessage(View v) {
         String msg = ((EditText) findViewById(R.id.edtMessage)).getText().toString();
+        if (msg.length() == 0) return;
         ((EditText) findViewById(R.id.edtMessage)).setText("");
         ContentValues cv = new ContentValues();
         cv.put(MessageDB.TableEntry.COLUMN_FROM, ChatService.getUserName());
