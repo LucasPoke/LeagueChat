@@ -1,8 +1,10 @@
 package com.spielpark.steve.leaguechat.mainpage;
 
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.sqlite.SQLiteDatabase;
@@ -31,6 +33,7 @@ import com.github.theholywaffle.lolchatapi.listeners.ChatListener;
 import com.github.theholywaffle.lolchatapi.listeners.FriendListener;
 import com.github.theholywaffle.lolchatapi.wrapper.Friend;
 import com.spielpark.steve.leaguechat.R;
+import com.spielpark.steve.leaguechat.actLogin;
 import com.spielpark.steve.leaguechat.actLogin_transition;
 import com.spielpark.steve.leaguechat.chatpage.MessageDB;
 import com.spielpark.steve.leaguechat.chatpage.actChatPage;
@@ -173,6 +176,30 @@ public class actMainPage extends ActionBarActivity {
     private int getImageId(Context context, String imageName) {
         return context.getResources().getIdentifier("drawable/" + imageName, null, context.getPackageName());
     }
+
+    @Override
+    public void onBackPressed() {
+        AlertDialog.Builder bld = new AlertDialog.Builder(this, AlertDialog.THEME_HOLO_DARK)
+                .setTitle("Log Out?")
+                .setMessage("You will need to log back in to chat with friends!")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent logOut = new Intent(actMainPage.this, ChatService.class);
+                        logOut.setAction("DO_LOGOUT");
+                        Intent intent = new Intent(actMainPage.this, actLogin.class);
+                        startActivity(intent);
+                    }
+                })
+                .setNegativeButton("No!", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+        bld.create().show();
+    }
+
     private void updateFriend(Friend f, String type) {
         if (f != null) {
             //Log.d("actMainPage/updateFriend", "Name: " + f.getName() + "..Type: " + type);
@@ -243,12 +270,10 @@ public class actMainPage extends ActionBarActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        if (id == android.R.id.home) {
+            onBackPressed();
         }
-
-        return super.onOptionsItemSelected(item);
+        return true;
     }
 
     public static View getViewByPosition(int pos, ListView listView) {
