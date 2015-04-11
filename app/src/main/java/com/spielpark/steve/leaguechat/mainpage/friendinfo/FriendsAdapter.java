@@ -82,6 +82,7 @@ public class FriendsAdapter extends BaseAdapter {
                 Intent intent = new Intent(context, actChatPage.class);
                 intent.putExtra("friendName", curFriend.getName());
                 curFriend.setPendingMessage(false);
+                notifyDataSetChanged();
                 context.startActivity(intent);
             }
         });

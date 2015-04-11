@@ -123,9 +123,6 @@ public class actMainPage extends ActionBarActivity {
         friendsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.d("actMainPage/setUpFriendsList", "Friend Object: " + ChatService.getFriendByName(mAdapter.getItem(position).getName()).getStatus());
-                Log.d("Gametime", "Game Time: " + new SimpleDateFormat("mmm:ss").format(ChatService.getFriendByName(mAdapter.getItem(position).getName()).getStatus().getGameTime()));
-                Log.d("Skin", "Skin: " + ChatService.getFriendByName(mAdapter.getItem(position).getName()).getStatus().getSkin());
                 actMainPage.this.displayExtendedInfo(ChatService.getFriendByName(mAdapter.getInfo().get(position).getName()));
                 FriendsAdapter.mSelected = (position == FriendsAdapter.mSelected ? -1 : position);
                 mAdapter.notifyDataSetChanged();
