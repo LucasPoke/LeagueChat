@@ -46,6 +46,7 @@ public class actLogin_transition extends Activity {
         Intent intent = new Intent(getApplicationContext(), ChatService.class);
         intent.putExtra("username", extras.getString("un"));
         intent.putExtra("password", extras.getCharArray("pw"));
+        intent.putExtra("region", extras.getString("region"));
         extras.remove("password");
         intent.setAction("DO_LOGIN");
         Log.d("CHAT_SERVICE", "Starting chat service with DO_LOGIN");

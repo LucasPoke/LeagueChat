@@ -62,7 +62,7 @@ public class ChatService extends IntentService {
         }
         switch(intent.getAction()) {
             case "DO_LOGIN" : {
-                handleLogin(intent.getExtras().getString("username"), intent.getExtras().getCharArray("password"));
+                handleLogin(intent.getExtras().getString("username"), intent.getExtras().getCharArray("password"), ChatServer.valueOf(intent.getExtras().getString("region")));
                 intent.getExtras().remove("password");
                 break;
             }
@@ -234,7 +234,7 @@ public class ChatService extends IntentService {
             }
         });
     }
-    private void handleLogin(final String u, final char[] pw) {
+    private void handleLogin(final String u, final char[] pw, final ChatServer region) {
         ChatService.this.userName = u;
         LoLChat.init(getApplicationContext());
         AsyncTask loginTask = new AsyncTask<Void, Void, Void>() {
@@ -251,7 +251,7 @@ public class ChatService extends IntentService {
             protected Void doInBackground(Void... params) {
                 try {
                     sendBroadcast("login_status_update", "Assigning API..");
-                    api = new LoLChat(ChatServer.NA, false);
+                    api = new LoLChat(region, false);
                     loggedIn = api.login(u, new String(pw));
                     if (loggedIn) {
                         sendBroadcast("login_status_update", "Logged in!");

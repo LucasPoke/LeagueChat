@@ -17,13 +17,18 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 
+import com.github.theholywaffle.lolchatapi.ChatServer;
 import com.spielpark.steve.leaguechat.news.NewsReader;
 import com.spielpark.steve.leaguechat.news.NewsTask;
+import com.spielpark.steve.leaguechat.service.ChatService;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -40,14 +45,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class actLogin extends Activity {
-
     private final int NUM_ARTICLES = 8;
+    private final ArrayList<String> regions = new ArrayList();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_login);
         setLoginText();
         getNews();
+        for (ChatServer s : ChatServer.values()) {
+            regions.add(s.name());
+        }
+        ArrayAdapter adapter = new ArrayAdapter(this, R.layout.region_item, R.id.spnRegion, regions);
+        adapter.setDropDownViewResource(R.layout.region_item);
+        ((Spinner)findViewById(R.id.region_select)).setAdapter(adapter);
+        ((Spinner)findViewById(R.id.region_select)).setSelection(regions.indexOf("NA"));
     }
 
     public void beginLogin(View v) {
@@ -56,6 +68,7 @@ public class actLogin extends Activity {
         Intent intent = new Intent(this, actLogin_transition.class);
         intent.putExtra("un", NotMyPasswords.notMyUserName);
         intent.putExtra("pw", NotMyPasswords.notMyPassword.toCharArray());
+        intent.putExtra("region", ((Spinner)findViewById(R.id.region_select)).getSelectedItem().toString());
         //intent.putExtra("un", user);
         //intent.putExtra("pw", password);
         startActivity(intent);
@@ -94,5 +107,12 @@ public class actLogin extends Activity {
             }
         });
         AsyncTask getTopPosts = new NewsTask(txtPosts, (RelativeLayout) findViewById(R.id.loadingPanel), REDDIT_POSTS, NUM_ARTICLES).execute();
+    }
+
+    private class RegionAdapter extends ArrayAdapter {
+
+        public RegionAdapter(Context context, int resource, List objects) {
+            super(context, resource, objects);
+        }
     }
 }
