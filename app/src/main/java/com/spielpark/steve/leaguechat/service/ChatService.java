@@ -128,7 +128,7 @@ public class ChatService extends IntentService {
         if (pendingFriends.toString().contains(from)) return;
         boolean multiple = pendingFriends.length() > 0;
         Intent intent = new Intent(this, multiple ? actMainPage.class : actChatPage.class);
-        if (multiple)
+        if (!multiple)
             intent.putExtra("friendName", from);
         TaskStackBuilder stack = TaskStackBuilder.create(this);
         stack.addParentStack(multiple ? actMainPage.class : actChatPage.class);
