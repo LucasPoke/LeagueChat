@@ -51,9 +51,6 @@ public class actLogin_transition extends Activity {
         intent.setAction("DO_LOGIN");
         Log.d("CHAT_SERVICE", "Starting chat service with DO_LOGIN");
         startService(intent);
-        //LoLChat.init(getApplicationContext());
-        //LoginTask myLogin = new LoginTask(status, this);
-        //myLogin.execute(extras.getString("un"), new String(extras.getCharArray("pw")));
     }
 
     private class LoginReceiver extends BroadcastReceiver {

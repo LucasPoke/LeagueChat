@@ -38,7 +38,7 @@ public class NewsAdapter extends ArrayAdapter<String> {
         }
         TextView post = (TextView) v.findViewById(R.id.lstTextView);
         post.setTypeface(font);
-        post.setText(Html.fromHtml("<a href=\"" + links[position] + "\">" + titles[position] + "</a>"));
+        post.setText(Html.fromHtml("<a href=\"" + links[position] + "\">" + (titles[position].length() > 50 ? titles[position].substring(0, 50) + "..." : titles[position]) + "</a>"));
         post.setMovementMethod(LinkMovementMethod.getInstance());
         post.setClickable(true);
         return v;

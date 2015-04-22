@@ -9,16 +9,16 @@
         android:layout_width="22dp"
         android:layout_height="25dp"
         android:src="@drawable/arrow"
-        android:layout_marginTop="13dp"/>
+        android:layout_marginTop="10dp"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:layout_marginLeft="3dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginLeft="4dp"
         android:id="@+id/lstTextView"
         android:textColor="#FFFFFF"
-        android:textSize="15sp"
+        android:textSize="18sp"
         android:textColorLink="#EEA92A"
         android:textStyle="bold"/>
 

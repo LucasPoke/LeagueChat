@@ -11,10 +11,11 @@
         android:id="@+id/spnRegion"
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="80dp"
-        android:layout_height="30dp"
+        android:layout_height="25dp"
+        android:layout_marginBottom="6dp"
+        android:textStyle="bold"
         android:textSize="16sp"
         android:gravity="center"
         android:textColor="#FFFFFF"
-        android:padding="5dp"
-        android:background="@drawable/texture_spinner"/>
+        android:background="@drawable/texture_spinner3"/>
 </LinearLayout>
