@@ -6,6 +6,7 @@ import android.util.Log;
 import com.github.theholywaffle.lolchatapi.ChatMode;
 import com.github.theholywaffle.lolchatapi.LolStatus;
 import com.github.theholywaffle.lolchatapi.wrapper.Friend;
+import com.spielpark.steve.leaguechat.service.ChatService;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -48,8 +49,14 @@ public class FriendInfoReader {
 
             @Override
             public int compare(FriendInfo lhs, FriendInfo rhs) {
+                if (lhs == null || rhs == null) {
+                    return 0;
+                }
+                if (lhs.getInGame() == null || rhs.getInGame() == null) {
+                    return 0;
+                }
                 int x = lhs.getInGame().order();
-                int y =rhs.getInGame().order();
+                int y = rhs.getInGame().order();
                 return (x < y) ? -1 : ((x == y) ? 0 : 1);
             }
         });

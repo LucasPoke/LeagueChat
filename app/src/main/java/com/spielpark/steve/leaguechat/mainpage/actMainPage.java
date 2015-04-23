@@ -238,6 +238,11 @@ public class actMainPage extends ActionBarActivity {
                     //receiveMessage(intent.getExtras().getString("arg0"));
                     break;
                 }
+                case "refresh_list" : {
+                    Log.d("aMP/receiveMessage", "Refreshing mAdapter");
+                    mAdapter.notifyDataSetChanged();
+                    break;
+                }
                 case "friend_request" : {
                     //TODO: This.
                 }

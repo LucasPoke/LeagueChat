@@ -120,7 +120,7 @@ public class ChatService extends IntentService {
                 inf.setPendingMessage(true);
             }
         }
-        actMainPage.mAdapter.notifyDataSetChanged();
+        sendBroadcast("refresh_list");
     }
 
     private void makeNotification(String from, String message) {
