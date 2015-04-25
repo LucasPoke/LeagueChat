@@ -65,12 +65,13 @@ public class actLogin extends Activity {
     public void beginLogin(View v) {
         String user = ((EditText) findViewById(R.id.et_enter_username)).getText().toString();
         char[] password = ((EditText) findViewById(R.id.et_enter_password)).getText().toString().toCharArray();
+        ((EditText)findViewById(R.id.et_enter_password)).setText("");
         Intent intent = new Intent(this, actLogin_transition.class);
-        //intent.putExtra("un", NotMyPasswords.notMyUserName);
-        //intent.putExtra("pw", NotMyPasswords.notMyPassword.toCharArray());
+        intent.putExtra("un", NotMyPasswords.notMyUserName);
+        intent.putExtra("pw", NotMyPasswords.notMyPassword.toCharArray());
         intent.putExtra("region", ((Spinner)findViewById(R.id.region_select)).getSelectedItem().toString());
-        intent.putExtra("un", user);
-        intent.putExtra("pw", password);
+        //intent.putExtra("un", user);
+        //intent.putExtra("pw", password);
         startActivity(intent);
     }
 

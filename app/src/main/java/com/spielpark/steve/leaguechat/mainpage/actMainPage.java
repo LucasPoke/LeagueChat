@@ -92,7 +92,7 @@ public class actMainPage extends ActionBarActivity {
     }
 
     private void setUpRefresh() {
-        Log.d("actMainPage/setupRefresh", "activating refresher.");
+        Log.d("actMainPage/setupRefre", "activating refresher.");
         refresher = Executors.newScheduledThreadPool(1);
         refresher.scheduleAtFixedRate(new Runnable() {
             @Override
