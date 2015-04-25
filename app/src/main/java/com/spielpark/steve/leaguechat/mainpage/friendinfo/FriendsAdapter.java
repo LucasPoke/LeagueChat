@@ -67,16 +67,24 @@ public class FriendsAdapter extends BaseAdapter {
         View v = convertView;
         if (v == null) {
             v = inflater.inflate(R.layout.listview_friends_list, null);
+            ViewHolder vh = new ViewHolder();
+            vh.profIcon = (ImageView)v.findViewById(R.id.fr_img_profile);
+            vh.chatIcon = (ImageView)v.findViewById(R.id.fr_img_chatico);
+            vh.name = (TextView)v.findViewById(R.id.fr_txt_name);
+            vh.status = (TextView)v.findViewById(R.id.fr_txt_status);
+            vh.gameStatus = (TextView)v.findViewById(R.id.fr_txt_ingame);
+            v.setTag(vh);
         }
         if (position == mSelected) {
             v.setBackgroundColor(Color.argb(80, 222, 222, 222));
         } else {
             v.setBackgroundColor(Color.argb(47, 0, 124, 114));
         }
+        ViewHolder vh = (ViewHolder) v.getTag();
         final FriendInfo curFriend = infos.get(position);
-        ((ImageView)v.findViewById(R.id.fr_img_profile)).setImageResource(Util.getProfileIconId(curFriend.getProfIconID()));
-        ((ImageView)(v.findViewById(R.id.fr_img_chatico))).setImageResource(curFriend.isPendingMessage() ? R.drawable.chatico_pending : R.drawable.chatico);
-        (v.findViewById(R.id.fr_img_chatico)).setOnClickListener(new View.OnClickListener() {
+        vh.profIcon.setImageResource(Util.getProfileIconId(curFriend.getProfIconID()));
+        vh.chatIcon.setImageResource(curFriend.isPendingMessage() ? R.drawable.chatico_pending : R.drawable.chatico);
+        vh.chatIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
                 Intent intent = new Intent(context, actChatPage.class);
@@ -86,20 +94,26 @@ public class FriendsAdapter extends BaseAdapter {
                 context.startActivity(intent);
             }
         });
-        ((TextView)v.findViewById(R.id.fr_txt_name)).setText(curFriend.getName());
-        ((TextView)v.findViewById(R.id.fr_txt_status)).setText(curFriend.getStatus());
-        TextView inGameStatus = ((TextView)v.findViewById(R.id.fr_txt_ingame));
-        inGameStatus.setText(curFriend.getInGame().realTalk());
-        if (inGameStatus.getText().toString().contains("In") || inGameStatus.getText().toString().equals("Spectating")) {
-            inGameStatus.setTextColor(Color.rgb(240, 213, 38));
-        } else if (inGameStatus.getText().toString().contains("Away")){
-            inGameStatus.setTextColor(Color.rgb(239, 51, 42));
+        vh.name.setText(curFriend.getName());
+        vh.status.setText(curFriend.getStatus());
+        vh.gameStatus.setText(curFriend.getInGame().realTalk());
+        if (vh.gameStatus.getText().toString().contains("In") || vh.gameStatus.getText().toString().equals("Spectating")) {
+            vh.gameStatus.setTextColor(Color.rgb(240, 213, 38));
+        } else if (vh.gameStatus.getText().toString().contains("Away")){
+            vh.gameStatus.setTextColor(Color.rgb(239, 51, 42));
         } else {
-            inGameStatus.setTextColor(Color.rgb(81, 240, 71));
+            vh.gameStatus.setTextColor(Color.rgb(81, 240, 71));
         }
         return v;
     }
 
+    static class ViewHolder {
+        TextView name;
+        TextView status;
+        TextView gameStatus;
+        ImageView profIcon;
+        ImageView chatIcon;
+    }
     public void refreshInfos() {
         List<FriendInfo> newList = new ArrayList<>();
         List<String> pendingMessages = new ArrayList(15);
