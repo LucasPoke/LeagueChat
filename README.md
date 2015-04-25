@@ -2,9 +2,9 @@
 
 Welcome! LeagueChat is a simple app that lets you chat with your friends from League of Legends from your phone. Features some basic stat-tracking to see how your friends have been holding up on the rift. 
 
-![Login](https://raw.github.com/shadowwolf0189/LeagueChat/master/imgs/login.jpg)
-![FriendsList](https://raw.github.com/shadowwolf0189/LeagueChat/master/imgs/flist.jpg)
-![FriendsListExtended](https://raw.github.com/shadowwolf0189/LeagueChat/master/imgs/flist_extended.jpg)
+![Login](https://raw.github.com/shadowwolf0189/LeagueChat/master/imgs/login.png)
+![FriendsList](https://raw.github.com/shadowwolf0189/LeagueChat/master/imgs/flist.png)
+![FriendsListExtended](https://raw.github.com/shadowwolf0189/LeagueChat/master/imgs/flist_extended.png)
 
 ### How does it work?
 Riot uses a few different methods to make a cohesive game. XMPP is the protocol used for chatting, and it is possible to connect to this server along without the client! 
