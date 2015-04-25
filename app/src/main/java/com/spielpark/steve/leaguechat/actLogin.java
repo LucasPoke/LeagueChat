@@ -109,11 +109,4 @@ public class actLogin extends Activity {
         });
         AsyncTask getTopPosts = new NewsTask(txtPosts, (RelativeLayout) findViewById(R.id.loadingPanel), REDDIT_POSTS, NUM_ARTICLES).execute();
     }
-
-    private class RegionAdapter extends ArrayAdapter {
-
-        public RegionAdapter(Context context, int resource, List objects) {
-            super(context, resource, objects);
-        }
-    }
 }
