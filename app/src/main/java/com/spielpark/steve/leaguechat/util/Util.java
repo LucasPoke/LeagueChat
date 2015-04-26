@@ -12,7 +12,7 @@ public class Util {
 
     public static int getProfileIconId(int num) {
         StringBuilder ret = new StringBuilder("7f020");
-        int ritoID = num;
+        int ritoID = ((num == 29) ? 0 : num);
         if (ritoID <= 28) {
             ritoID++;
             if (ritoID < 16) {
@@ -29,6 +29,13 @@ public class Util {
         return Integer.parseInt(ret.toString(), 16);
     }
 
+    public static int getGroupVal(String name) {
+        int ret = 0;
+        for (Character c : name.toCharArray()) {
+            ret += c;
+        }
+        return ret;
+    }
 
     public static Shader getTierGraphics(String tier) {
         Shader shader;
