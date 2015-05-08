@@ -9,28 +9,49 @@ import dto.Game.Game;
  */
 public class FriendInfo {
 
-    private String  status;
+    private String status;
     private String name;
+    private String groupName;
     private LolStatus.GameStatus gameStatus;
     private int profIconID;
+    private int groupPos;
     private boolean pendingMessage;
 
-    public FriendInfo(String name) {
+    public FriendInfo(String name, String groupName) {
         this.name = name;
+        this.groupName = groupName;
     }
 
-    public FriendInfo(String name, String status, LolStatus.GameStatus inGame, int profIconID) {
+    public FriendInfo(String name, String status, String groupName, LolStatus.GameStatus inGame, int profIconID, int groupPos) {
         this.status = status;
         this.name = name;
+        this.groupName = groupName;
         this.gameStatus = inGame;
         this.profIconID = profIconID;
         this.pendingMessage = false;
+        this.groupPos = groupPos;
     }
 
+    public FriendInfo(String name, String status, String groupName, LolStatus.GameStatus inGame, int profIconID, int groupPos, boolean pendingMessage) {
+        this.status = status;
+        this.name = name;
+        this.groupName = groupName;
+        this.gameStatus = inGame;
+        this.profIconID = profIconID;
+        this.pendingMessage = false;
+        this.groupPos = groupPos;
+        this.pendingMessage = pendingMessage;
+    }
+
+    public String getGroupName() {
+        return groupName;
+    }
     public int getProfIconID() {
         return profIconID;
     }
 
+    public int getGroupPos() { return groupPos; }
+    public void setGroupPos(int groupPos) { this.groupPos = groupPos; }
     public void setProfIconID(int profIconID) {
         this.profIconID = profIconID;
     }

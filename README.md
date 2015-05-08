@@ -14,7 +14,7 @@ I truly wish I didn't. Your login information for the XMPP server on Riot's end 
 You can find LeagueChat on the Play Store! Sorry iPhone users, but I do not have an iPhone nor a $100 Apple-developers license. 
 
 ### To-Do:
-- Use your pre-existing friend groups for organization.
+- ~~Use your pre-existing friend groups for organization.~~ [x] Implemented!
 - Small bugs with notification not disappearing after seeing the message.
 - Make the chatpage look prettier.
 - Allow user to set profile icon and status.
@@ -37,6 +37,7 @@ You can find me on the following platforms:
 - League of Legends: Noxian Mercenary
 - Steam: Penumbra789
 - Email: BuckeyeDevApps@gmail.com
+
 **Free Software, Hell Yeah!**
 
 [TheHolyWaffle]:https://github.com/TheHolyWaffle/League-of-Legends-XMPP-Chat-Library

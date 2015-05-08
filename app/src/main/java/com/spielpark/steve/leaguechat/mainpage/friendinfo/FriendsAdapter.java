@@ -17,6 +17,7 @@ import android.widget.TextView;
 import com.github.theholywaffle.lolchatapi.ChatMode;
 import com.github.theholywaffle.lolchatapi.LolStatus;
 import com.github.theholywaffle.lolchatapi.wrapper.Friend;
+import com.github.theholywaffle.lolchatapi.wrapper.FriendGroup;
 import com.spielpark.steve.leaguechat.R;
 import com.spielpark.steve.leaguechat.chatpage.actChatPage;
 import com.spielpark.steve.leaguechat.service.ChatService;
@@ -25,6 +26,7 @@ import com.spielpark.steve.leaguechat.util.Util;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 
 import dto.Static.Info;
@@ -65,7 +67,14 @@ public class FriendsAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View v = convertView;
-        if (v == null) {
+        final FriendInfo curFriend = infos.get(position);
+        if (curFriend.getName().equals("!--GROUP--!")) {
+            v = inflater.inflate(R.layout.listview_friends_section_header, null);
+            v.setVisibility(View.VISIBLE);
+            ((TextView) v.findViewById(R.id.txt_header_name)).setText(curFriend.getGroupName() + Util.getFriendCount(curFriend.getProfIconID()));
+            return v;
+        }
+        if (v == null || v.getTag() == null) {
             v = inflater.inflate(R.layout.listview_friends_list, null);
             ViewHolder vh = new ViewHolder();
             vh.profIcon = (ImageView)v.findViewById(R.id.fr_img_profile);
@@ -81,7 +90,7 @@ public class FriendsAdapter extends BaseAdapter {
             v.setBackgroundColor(Color.argb(47, 0, 124, 114));
         }
         ViewHolder vh = (ViewHolder) v.getTag();
-        final FriendInfo curFriend = infos.get(position);
+        Log.d("FA/GV", "Name: " + curFriend.getName() + "...ProfIco: " + curFriend.getProfIconID());
         vh.profIcon.setImageResource(Util.getProfileIconId(curFriend.getProfIconID()));
         vh.chatIcon.setImageResource(curFriend.isPendingMessage() ? R.drawable.chatico_pending : R.drawable.chatico);
         vh.chatIcon.setOnClickListener(new View.OnClickListener() {
@@ -117,17 +126,29 @@ public class FriendsAdapter extends BaseAdapter {
     public void refreshInfos() {
         List<FriendInfo> newList = new ArrayList<>();
         List<String> pendingMessages = new ArrayList(15);
+        int groupVal;
         for (FriendInfo f : infos) {
             if (f.isPendingMessage()) {
                 pendingMessages.add(f.getName());
             }
         }
-        for (Friend f : ChatService.getOnlineFriends()) {
-            FriendInfo toAdd = new FriendInfo(f.getName(), f.getStatus().getStatusMessage(), f.getChatMode() == ChatMode.AWAY ? LolStatus.GameStatus.AWAY : f.getStatus().getGameStatus(), f.getStatus().getProfileIconId());
-            if (pendingMessages.contains(f.getName())) {
-                toAdd.setPendingMessage(true);
+        for (FriendGroup fg : ChatService.getFriendGroups()) {
+            int numOnline = 0;
+            int total = 0;groupVal = Util.getGroupVal(fg.getName());
+            FriendInfo group = new FriendInfo("!--GROUP--!", fg.getName());
+            group.setInGame(LolStatus.GameStatus.GROUP);
+            group.setGroupPos(Util.getGroupVal(fg.getName()));
+            for (Friend f : fg.getFriends()) {
+                total++;
+                if (!(f.isOnline())) continue;
+                numOnline++;                String name = f.getName();
+                String status = f.getStatus().getStatusMessage();
+                LolStatus.GameStatus gameStatus = f.getChatMode() == ChatMode.AWAY ? LolStatus.GameStatus.AWAY : f.getStatus().getGameStatus();
+                int iconId = f.getStatus().getProfileIconId();
+                newList.add(new FriendInfo(name, status, fg.getName(), gameStatus, iconId, groupVal, pendingMessages.contains(name)));
             }
-            newList.add(toAdd);
+            group.setProfIconID(total + (1000*numOnline));
+            newList.add(group);
         }
         infos = newList;
         this.sort();
@@ -155,6 +176,7 @@ public class FriendsAdapter extends BaseAdapter {
             @Override
             protected void onPostExecute(FriendInfo info) {
                 infos.add(info) ;
+                Util.changeFriendGroupCount(infos, friend, true);
                 FriendsAdapter.this.notifyDataSetChanged();
                 FriendsAdapter.this.sort();
             }
@@ -170,6 +192,7 @@ public class FriendsAdapter extends BaseAdapter {
             }
         }
         infos.remove(toRemove);
+        Util.changeFriendGroupCount(infos, friend, false);
         this.notifyDataSetChanged();
     }
 
@@ -201,7 +224,9 @@ public class FriendsAdapter extends BaseAdapter {
                     return 0;
                 }
                 int x = lhs.getInGame().order();
+                x += lhs.getGroupPos();
                 int y = rhs.getInGame().order();
+                y += rhs.getGroupPos();
                 return (x < y) ? -1 : ((x == y) ? 0 : 1);
             }
         });

@@ -41,7 +41,8 @@ public class LolStatus {
         IN_GAME("inGame", "In Game", 3),
         IN_TEAMBUILDER("inTeamBuilder", "In Team Builder", 1),
         TUTORIAL("tutorial", "In...Tutorial?", 4),
-        AWAY("away", "Away", 4);
+        AWAY("away", "Away", 4),
+        GROUP("gg", "gg", -1);
 
         private String internal;
         private String realTalk;

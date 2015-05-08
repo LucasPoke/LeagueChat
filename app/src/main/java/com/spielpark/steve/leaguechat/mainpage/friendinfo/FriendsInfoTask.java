@@ -29,7 +29,7 @@ public class FriendsInfoTask extends AsyncTask {
     @Override
     protected Object doInBackground(Object[] params) {
         Log.d("FriendsInfoTask", "Opening FriendInfoReader");
-        reader = new FriendInfoReader(ChatService.getOnlineFriends());
+        reader = new FriendInfoReader(ChatService.getFriendGroups());
         return null;
     }
 

@@ -4,7 +4,7 @@
     android:layout_width="fill_parent"
     android:layout_height="match_parent"
     android:layout_margin="4dp"
-    android:background="#2f007C72">
+    android:background="#3f007C72">
 
     <ImageView
         android:id="@+id/fr_img_profile"

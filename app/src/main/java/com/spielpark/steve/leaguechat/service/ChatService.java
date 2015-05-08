@@ -20,6 +20,7 @@ import com.github.theholywaffle.lolchatapi.LoLChat;
 import com.github.theholywaffle.lolchatapi.listeners.ChatListener;
 import com.github.theholywaffle.lolchatapi.listeners.FriendListener;
 import com.github.theholywaffle.lolchatapi.wrapper.Friend;
+import com.github.theholywaffle.lolchatapi.wrapper.FriendGroup;
 import com.spielpark.steve.leaguechat.R;
 import com.spielpark.steve.leaguechat.chatpage.MessageDB;
 import com.spielpark.steve.leaguechat.chatpage.actChatPage;
@@ -88,6 +89,9 @@ public class ChatService extends IntentService {
 
     public static List<Friend> getOnlineFriends() {
         return api.getOnlineFriends();
+    }
+    public static List<FriendGroup> getFriendGroups() {
+        return api.getFriendGroups();
     }
 
     public static Friend getFriendByName(String name) {

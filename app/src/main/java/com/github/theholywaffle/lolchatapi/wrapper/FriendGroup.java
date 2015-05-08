@@ -75,6 +75,18 @@ public class FriendGroup extends Wrapper<RosterGroup> {
     }
 
     /**
+     * @return list of all Friend's in this group
+     */
+    public List<Friend> getOnlineFriends() {
+        List<Friend> friends = new ArrayList<>();
+        for (RosterEntry e : get().getEntries()) {
+            friends.add(new Friend(api, con, e));
+        }
+        return friends;
+    }
+
+
+    /**
      * @return The name of this FriendGroup
      */
     public String getName() {

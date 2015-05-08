@@ -5,10 +5,40 @@ import android.graphics.LinearGradient;
 import android.graphics.Shader;
 import android.util.Log;
 
+import com.github.theholywaffle.lolchatapi.wrapper.Friend;
+import com.spielpark.steve.leaguechat.mainpage.friendinfo.FriendInfo;
+
+import java.util.List;
+
 /**
  * Created by Steve on 2/1/2015.
  */
 public class Util {
+
+    public static void changeFriendGroupCount(List<FriendInfo> list, Friend toChange, boolean add) {
+        for (int i = 0; i < list.size(); i++) {
+            FriendInfo f = list.get(i);
+            if (f.getName().equals("!--GROUP--!") && f.getGroupName().equals(toChange.getGroup())) {
+                int rep = f.getProfIconID();
+                int numOnline = rep / 1000;
+                int total = rep % 1000;
+                numOnline += (add ? 1 : -1);
+                rep = total + (numOnline * 1000);
+                f.setProfIconID(rep);
+                return;
+            }
+        }
+    }
+
+    public static String getFriendCount(int rep) {
+        StringBuilder bldr = new StringBuilder();
+        bldr.append(" (");
+        bldr.append(rep / 1000);
+        bldr.append("/");
+        bldr.append(rep % 1000);
+        bldr.append(")");
+        return bldr.toString();
+    }
 
     public static int getProfileIconId(int num) {
         StringBuilder ret = new StringBuilder("7f020");
@@ -18,8 +48,11 @@ public class Util {
             if (ritoID < 16) {
                 ret.append("0");
             }
-            ret.append("0" + Integer.toHexString(ritoID));
+            ret.append("0").append(Integer.toHexString(ritoID));
         } else {
+            if (ritoID < 795) {
+                ritoID -= 13;
+            }
             ritoID -= 471;
             if (ritoID < 256) {
                 ret.append("0");
@@ -34,7 +67,8 @@ public class Util {
         for (Character c : name.toCharArray()) {
             ret += c;
         }
-        return ret;
+        Log.d("Util/GGV", "Name: " + name + "...Val: " + ret);
+        return name.contains("**") ? 0 : ret;
     }
 
     public static Shader getTierGraphics(String tier) {

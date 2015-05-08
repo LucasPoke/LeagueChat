@@ -133,6 +133,9 @@ public class actMainPage extends ActionBarActivity {
     }
 
     private void displayExtendedInfo(Friend f) {
+        if (f == null) {
+            return;
+        }
         LolStatus status = f.getStatus();
         TextView fName = (TextView)findViewById(R.id.info_Name);
         if (f.getName().equals(fName.getText().toString())) {
