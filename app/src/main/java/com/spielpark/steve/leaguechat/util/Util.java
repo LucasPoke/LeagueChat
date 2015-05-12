@@ -50,8 +50,8 @@ public class Util {
             }
             ret.append("0").append(Integer.toHexString(ritoID));
         } else {
-            if (ritoID < 795) {
-                ritoID -= 13;
+            if (ritoID > 795) {
+                ritoID -= 11;
             }
             ritoID -= 471;
             if (ritoID < 256) {
