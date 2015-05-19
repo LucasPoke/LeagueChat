@@ -36,6 +36,7 @@
                 android:value="com.spielpark.steve.leaguechat.actLogin" />
         </activity>
         <activity
+            android:screenOrientation="portrait"
             android:name=".chatpage.actChatPage"
             android:label="@string/title_activity_chat"
             android:parentActivityName=".mainpage.actMainPage"
