@@ -26,7 +26,6 @@ import com.spielpark.steve.leaguechat.R;
 import com.spielpark.steve.leaguechat.service.ChatService;
 
 public class actChatPage extends ListActivity {
-    private static MessageDB db;
     private static ChatAdapter mAdapter;
     private static Cursor cursor;
     private static String friendName;
@@ -37,7 +36,6 @@ public class actChatPage extends ListActivity {
         if (savedInstanceState == null) {
             setContentView(R.layout.layout_chatpage);
         }
-        db = MessageDB.getInstance(this);
         friendName = getIntent().getExtras().getString("friendName");
         cursor = ChatService.queryDB(friendName, this);
         mAdapter = new ChatAdapter(this, cursor, 0);
@@ -91,11 +89,7 @@ public class actChatPage extends ListActivity {
         String msg = ((EditText) findViewById(R.id.edtMessage)).getText().toString();
         if (msg.length() == 0) return;
         ((EditText) findViewById(R.id.edtMessage)).setText("");
-        ContentValues cv = new ContentValues();
-        cv.put(MessageDB.TableEntry.COLUMN_FROM, ChatService.getUserName());
-        cv.put(MessageDB.TableEntry.COLUMN_TO, friendName);
-        cv.put(MessageDB.TableEntry.COLUMN_MESSAGE, msg);
-        db.getWritableDatabase().insert(MessageDB.TableEntry.TABLE_NAME, null, cv);
+
         Intent intent = new Intent(this, ChatService.class);
         intent.setAction("SEND_MESSAGE");
         intent.putExtra("friendName", friendName);
