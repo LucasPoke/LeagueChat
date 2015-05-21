@@ -8,7 +8,7 @@ Welcome! LeagueChat is a simple app that lets you chat with your friends from Le
 Riot uses a few different methods to make a cohesive game. XMPP is the protocol used for chatting, and it is possible to connect to this server along without the client! 
 
 ### Why do I need your password?
-I truly wish I didn't. Your login information for the XMPP server on Riot's end (what allows the loading of your friends list, messaging, etc) is the same as your account information. I will make a short Youtube video which will explain where in the code your information is used: it is needed for the login alone, and it is afterwords discarded and all traces cleared from your phone's memory.
+I truly wish I didn't. Your login information for the XMPP server on Riot's end (what allows the loading of your friends list, messaging, etc) is the same as your account information. I will make a short Youtube video if necessary which will explain where in the code your information is used: it is needed for the login alone, and it is afterwords discarded and all traces cleared from your phone's memory.
 
 ### Installation
 You can find LeagueChat on the Play Store! Sorry iPhone users, but I do not have an iPhone nor a $100 Apple-developers license. 
