@@ -1,4 +1,5 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
@@ -16,7 +17,16 @@
         android:layout_marginBottom="10dp"
         android:stackFromBottom="true">
         </ListView>
-
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="2dp"
+        android:layout_marginLeft="6dp"
+        android:layout_marginRight="6dp"
+        android:background="#CCCCCC"
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="8dp"
+        android:id="@+id/info_separator_two"
+        />
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="10dp"
@@ -30,7 +40,7 @@
             android:layout_weight="95"
             android:layout_gravity="center_vertical"
             android:hint="Send a message.."
-            android:textColorHint="#FFFFFF"
+            android:textColorHint="#AAFFFFFF"
             android:textColor="#FFFFFF"
             android:textStyle="italic"
             android:textSize="20sp"
@@ -39,15 +49,15 @@
             android:background="@null"
             android:layout_marginLeft="5dp"/>
         <Button
-            android:layout_width="70dp"
+            android:layout_width="90dp"
             android:layout_height="40dp"
             android:layout_weight="1"
             android:layout_gravity="right|center_vertical"
             android:layout_marginLeft="10dp"
-            android:layout_marginRight="5dp"
+            android:layout_marginRight="7dp"
             android:id="@+id/btnSendMessage"
             android:onClick="sendMessage"
-            android:backgroundTint="#bebebeDD"
+            android:backgroundTint="#60C5F7"
             android:text="Send"/>
     </LinearLayout>
 
