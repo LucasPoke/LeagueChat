@@ -19,10 +19,11 @@ public class MessageDB extends SQLiteOpenHelper {
             TableEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
             TableEntry.COLUMN_FROM + " varchar, " +
             TableEntry.COLUMN_TO + " varchar, " +
-            TableEntry.COLUMN_MESSAGE + " text);";
+            TableEntry.COLUMN_MESSAGE + " text, " +
+            TableEntry.COLUMN_TIME + " int);";
 
     public MessageDB(Context context) {
-        super(context, TableEntry.DB_NAME, null, 14);
+        super(context, TableEntry.DB_NAME, null, 16);
         db = getWritableDatabase();
     }
 
@@ -49,7 +50,6 @@ public class MessageDB extends SQLiteOpenHelper {
     }
 
     public static abstract class TableEntry implements BaseColumns {
-
         public TableEntry() {
 
         }
@@ -60,5 +60,6 @@ public class MessageDB extends SQLiteOpenHelper {
         public static final String COLUMN_FROM = "_from";
         public static final String COLUMN_TO = "_to";
         public static final String COLUMN_MESSAGE = "message";
+        public static final String COLUMN_TIME = "time";
     }
 }
