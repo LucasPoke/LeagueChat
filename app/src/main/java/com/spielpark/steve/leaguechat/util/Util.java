@@ -8,17 +8,21 @@ import android.util.Log;
 import com.github.theholywaffle.lolchatapi.wrapper.Friend;
 import com.spielpark.steve.leaguechat.mainpage.friendinfo.FriendInfo;
 
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by Steve on 2/1/2015.
+ *
  */
 public class Util {
 
     public static void changeFriendGroupCount(List<FriendInfo> list, Friend toChange, boolean add) {
         for (int i = 0; i < list.size(); i++) {
             FriendInfo f = list.get(i);
-            if (f.getName().equals("!--GROUP--!") && f.getGroupName().equals(toChange.getGroup())) {
+            if (f.getName().equals("!--GROUP--!") && f.getGroupName().equals(toChange.getGroup().getName())) {
                 int rep = f.getProfIconID();
                 int numOnline = rep / 1000;
                 int total = rep % 1000;
@@ -31,13 +35,7 @@ public class Util {
     }
 
     public static String getFriendCount(int rep) {
-        StringBuilder bldr = new StringBuilder();
-        bldr.append(" (");
-        bldr.append(rep / 1000);
-        bldr.append("/");
-        bldr.append(rep % 1000);
-        bldr.append(")");
-        return bldr.toString();
+        return " (" + rep / 1000 + "/" + rep % 1000 + ")";
     }
 
     public static int getProfileIconId(int num) {
@@ -69,6 +67,16 @@ public class Util {
         }
         Log.d("Util/GGV", "Name: " + name + "...Val: " + ret);
         return name.contains("**") ? 0 : ret;
+    }
+
+    public static String getTimeChatFormat(GregorianCalendar cal){
+        StringBuilder bld = new StringBuilder();
+        Locale loc = Locale.getDefault();
+        bld.append(cal.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, loc)).append(", ");
+        bld.append(cal.getDisplayName(Calendar.MONTH, Calendar.LONG, loc)).append(" ");
+        bld.append(cal.get(Calendar.DAY_OF_MONTH)).append(", ");
+        bld.append(cal.get(Calendar.YEAR));
+        return bld.toString();
     }
 
     public static Shader getTierGraphics(String tier) {
