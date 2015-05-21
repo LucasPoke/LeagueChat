@@ -1,13 +1,12 @@
 package com.spielpark.steve.leaguechat.news;
+
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -31,11 +30,16 @@ public class NewsReader {
 
     public Map<String, String> getTitlesAndLink(int num) {
         Map<String, String> titles = new LinkedHashMap<>();
-        List<Element> threads = feed.getChildren("item");
-        for (int i = 0; i < num; i++) {
-            titles.put(threads.get(i).getChildText("title"), threads.get(i).getChildText("link"));
+        try {
+            List<Element> threads = feed.getChildren("item");
+            for (int i = 0; i < num; i++) {
+                titles.put(threads.get(i).getChildText("title"), threads.get(i).getChildText("link"));
+            }
+        } catch (NullPointerException e) {
+            titles.put("Unable To Load Reddit!", "http://www.reddit.com/r/all");
+        } finally {
+            return titles;
         }
-        return titles;
     }
 
 
