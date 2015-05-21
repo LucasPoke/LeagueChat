@@ -7,21 +7,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
-import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ListView;
-import android.widget.ResourceCursorAdapter;
 
-import com.github.theholywaffle.lolchatapi.wrapper.Friend;
 import com.spielpark.steve.leaguechat.R;
 import com.spielpark.steve.leaguechat.service.ChatService;
 
@@ -82,22 +74,28 @@ public class actChatPage extends ListActivity {
     private void receiveMessage() {
         mAdapter.swapCursor(ChatService.queryDB(friendName, this));
         mAdapter.notifyDataSetChanged();
-        getListView().smoothScrollToPosition(mAdapter.getCount());
+        getListView().smoothScrollToPosition(cursor.getCount());
     }
 
     public void sendMessage(View v) {
+        MessageDB db = MessageDB.getInstance(this);
         String msg = ((EditText) findViewById(R.id.edtMessage)).getText().toString();
         if (msg.length() == 0) return;
         ((EditText) findViewById(R.id.edtMessage)).setText("");
-
         Intent intent = new Intent(this, ChatService.class);
         intent.setAction("SEND_MESSAGE");
         intent.putExtra("friendName", friendName);
         intent.putExtra("message", msg);
         startService(intent);
+        ContentValues cv = new ContentValues();
+        cv.put(MessageDB.TableEntry.COLUMN_FROM, ChatService.getUserName());
+        cv.put(MessageDB.TableEntry.COLUMN_TO, friendName);
+        cv.put(MessageDB.TableEntry.COLUMN_MESSAGE, msg);
+        cv.put(MessageDB.TableEntry.COLUMN_TIME, System.currentTimeMillis());
+        db.getWritableDatabase().insert(MessageDB.TableEntry.TABLE_NAME, null, cv);
         mAdapter.swapCursor(ChatService.queryDB(friendName, this));
         mAdapter.notifyDataSetChanged();
-        getListView().smoothScrollToPosition(mAdapter.getCount());
+        getListView().smoothScrollToPosition(cursor.getCount());
     }
 
     private class ChatReceiver extends BroadcastReceiver {
@@ -105,10 +103,6 @@ public class actChatPage extends ListActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             switch(intent.getAction()) {
-                case "friend_status_change" : {
-                    //TODO: This. updateFriendsList();
-                    break;
-                }
                 case "message_received" : {
                     receiveMessage();
                     break;
