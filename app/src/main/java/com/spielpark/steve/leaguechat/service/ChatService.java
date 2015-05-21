@@ -6,10 +6,11 @@ import android.app.PendingIntent;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.AssetFileDescriptor;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.media.MediaPlayer;
 import android.os.AsyncTask;
-import android.os.Message;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.content.LocalBroadcastManager;
@@ -31,7 +32,6 @@ import com.spielpark.steve.leaguechat.mainpage.friendinfo.FriendsAdapter;
 import org.jivesoftware.smack.SmackException;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -40,7 +40,6 @@ import java.util.List;
  * helper methods.
  */
 public class ChatService extends IntentService {
-    private final int mNotificationID = 256;
     private static LoLChat api;
     private static String userName;
     public static StringBuilder pendingFriends = new StringBuilder();
@@ -82,14 +81,6 @@ public class ChatService extends IntentService {
         }
     }
 
-    private void sendMessage(String to, String message) {
-        Friend toSend = api.getFriendByName(to);
-        toSend.sendMessage(message);
-    }
-
-    public static List<Friend> getOnlineFriends() {
-        return api.getOnlineFriends();
-    }
     public static List<FriendGroup> getFriendGroups() {
         return api.getFriendGroups();
     }
@@ -103,10 +94,27 @@ public class ChatService extends IntentService {
 
     private void handleLogout() {
         try {
-            this.api.disconnect();
+            api.disconnect();
         } catch (SmackException.NotConnectedException e) {
             e.printStackTrace();
         }
+    }
+
+    private void playSound() {
+        try {
+            MediaPlayer player = new MediaPlayer();
+            AssetFileDescriptor afd = getAssets().openFd("sounds/message.mp3");
+            player.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
+            player.prepare();
+            player.start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void sendMessage(String to, String message) {
+        Friend toSend = api.getFriendByName(to);
+        toSend.sendMessage(message);
     }
 
     private void receiveMessage(String from, String message) {
@@ -116,18 +124,21 @@ public class ChatService extends IntentService {
         cv.put(MessageDB.TableEntry.COLUMN_TO, ChatService.getUserName());
         cv.put(MessageDB.TableEntry.COLUMN_FROM, from);
         cv.put(MessageDB.TableEntry.COLUMN_MESSAGE, message);
+        cv.put(MessageDB.TableEntry.COLUMN_TIME, System.currentTimeMillis());
         write.insert(MessageDB.TableEntry.TABLE_NAME, null, cv);
         makeNotification(from, message);
-        for (FriendInfo inf : actMainPage.mAdapter.getInfo()) {
+        for (FriendInfo inf : FriendsAdapter.getInfo()) {
             if (inf.getName().equals(from) && !(inf.isPendingMessage())) {
                 Log.d("aMP/receiveMessage", "Pending message for: " + from);
                 inf.setPendingMessage(true);
+                break;
             }
         }
-        sendBroadcast("refresh_list");
+        sendBroadcast("message_received");
     }
 
     private void makeNotification(String from, String message) {
+        playSound();
         if (pendingFriends.toString().equals(from)) pendingFriends.setLength(0);
         if (pendingFriends.toString().contains(from)) return;
         boolean multiple = pendingFriends.length() > 0;
@@ -143,14 +154,14 @@ public class ChatService extends IntentService {
         PendingIntent pIntentBroadcast = PendingIntent.getService(this, 512, broadcastIntent,PendingIntent.FLAG_UPDATE_CURRENT);
         NotificationCompat.Builder bldr = new NotificationCompat.Builder(this)
                 .setAutoCancel(true)
-                .setContentText(multiple ? pendingFriends.append(", " + from).toString() : message.length() > 30 ? message.substring(0, 29) + "..." : message)
+                .setContentText(multiple ? pendingFriends.append(", ").append(from) : message.length() > 30 ? message.substring(0, 29) + "..." : message)
                 .setContentTitle(multiple ? "Multiple Messages" : "Message From: " + pendingFriends.append(from).toString())
                 .setSmallIcon(R.drawable.chatico_pending)
                 .setContentIntent(pIntent)
                 .setLights(0xDDE5531F, 100, 2000)
                 .setTicker(from)
                 .setDeleteIntent(pIntentBroadcast);
-        ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).notify(mNotificationID, bldr.build());
+        ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).notify(256, bldr.build());
     }
 
     public static Cursor queryDB(String fName, Context ctx) {
@@ -239,9 +250,9 @@ public class ChatService extends IntentService {
         });
     }
     private void handleLogin(final String u, final char[] pw, final ChatServer region) {
-        ChatService.this.userName = u;
+        userName = u;
         LoLChat.init(getApplicationContext());
-        AsyncTask loginTask = new AsyncTask<Void, Void, Void>() {
+        new AsyncTask<Void, Void, Void>() {
             boolean loggedIn;
 
             @Override
@@ -263,7 +274,6 @@ public class ChatService extends IntentService {
                         sendBroadcast("login_status_update", "Redirecting to Main Chat page..");
                         sendBroadcast("login_transition");
                     }
-                    Log.d("LOGGING IN: SERVICE", "Sending broadcast, should be logged in..");
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
