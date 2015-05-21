@@ -75,22 +75,24 @@ ADDED from AndroidManifest.xml:29:9
 		ADDED from AndroidManifest.xml:31:13
 activity#com.spielpark.steve.leaguechat.chatpage.actChatPage
 ADDED from AndroidManifest.xml:38:9
-	android:label
-		ADDED from AndroidManifest.xml:40:13
-	android:parentActivityName
-		ADDED from AndroidManifest.xml:41:13
-	android:exported
-		ADDED from AndroidManifest.xml:43:13
-	android:theme
-		ADDED from AndroidManifest.xml:42:13
-	android:name
+	android:screenOrientation
 		ADDED from AndroidManifest.xml:39:13
-service#com.spielpark.steve.leaguechat.service.ChatService
-ADDED from AndroidManifest.xml:49:9
+	android:label
+		ADDED from AndroidManifest.xml:41:13
+	android:parentActivityName
+		ADDED from AndroidManifest.xml:42:13
 	android:exported
-		ADDED from AndroidManifest.xml:51:13
+		ADDED from AndroidManifest.xml:44:13
+	android:theme
+		ADDED from AndroidManifest.xml:43:13
 	android:name
-		ADDED from AndroidManifest.xml:50:13
+		ADDED from AndroidManifest.xml:40:13
+service#com.spielpark.steve.leaguechat.service.ChatService
+ADDED from AndroidManifest.xml:50:9
+	android:exported
+		ADDED from AndroidManifest.xml:52:13
+	android:name
+		ADDED from AndroidManifest.xml:51:13
 uses-sdk
 INJECTED from AndroidManifest.xml:0:0 reason: use-sdk injection requested
 MERGED from com.android.support:appcompat-v7:21.0.3:15:5
