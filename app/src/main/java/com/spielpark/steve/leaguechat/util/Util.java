@@ -3,7 +3,6 @@ package com.spielpark.steve.leaguechat.util;
 import android.graphics.Color;
 import android.graphics.LinearGradient;
 import android.graphics.Shader;
-import android.util.Log;
 
 import com.github.theholywaffle.lolchatapi.wrapper.Friend;
 import com.spielpark.steve.leaguechat.mainpage.friendinfo.FriendInfo;
@@ -65,7 +64,6 @@ public class Util {
         for (Character c : name.toCharArray()) {
             ret += c;
         }
-        Log.d("Util/GGV", "Name: " + name + "...Val: " + ret);
         return name.contains("**") ? 0 : ret;
     }
 
