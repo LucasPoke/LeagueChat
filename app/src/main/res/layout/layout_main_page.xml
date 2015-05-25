@@ -223,7 +223,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="League Chat v0.1"
+            android:text="League Chat v0.99"
             android:textSize="8sp"
             android:textColor="#DDDDDD"
             android:textStyle="italic"
