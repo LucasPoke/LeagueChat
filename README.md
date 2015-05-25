@@ -14,9 +14,9 @@ You can find LeagueChat on the Play Store! Sorry iPhone users, but I do not have
 
 ### To-Do:
 - ~~Use your pre-existing friend groups for organization.~~ [x] Implemented!
-- ~~Small bugs with notification not disappearing after seeing the message.~~
+- ~~Small bugs with notification not disappearing after seeing the message.~~ [x] Implemented!
 - ~~Make the chatpage look prettier.~~ [x] Implemented!
-- ~~Allow user to set profile icon and status.~~
+- ~~Allow user to set profile icon and status.~~ [x] Implemented!
 - Custom color themes.
 
 ### Resources Used
