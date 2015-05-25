@@ -11,7 +11,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.media.MediaPlayer;
 import android.os.AsyncTask;
-import android.os.Message;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.content.LocalBroadcastManager;
@@ -143,7 +142,7 @@ public class ChatService extends IntentService {
         write.insert(MessageDB.TableEntry.TABLE_NAME, null, cv);
         makeNotification(from.getName(), message);
         for (FriendInfo inf : FriendsAdapter.getInfo()) {
-            if (inf.getName().equals(from) && !(inf.isPendingMessage())) {
+            if (inf.getName().equals(from.getName()) && !(inf.isPendingMessage())) {
                 Log.d("aMP/receiveMessage", "Pending message for: " + from.getName());
                 inf.setPendingMessage(true);
                 break;
