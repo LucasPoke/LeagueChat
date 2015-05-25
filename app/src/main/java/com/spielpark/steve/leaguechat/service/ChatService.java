@@ -11,6 +11,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.media.MediaPlayer;
 import android.os.AsyncTask;
+import android.os.Message;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.content.LocalBroadcastManager;
@@ -18,6 +19,7 @@ import android.util.Log;
 
 import com.github.theholywaffle.lolchatapi.ChatServer;
 import com.github.theholywaffle.lolchatapi.LoLChat;
+import com.github.theholywaffle.lolchatapi.LolStatus;
 import com.github.theholywaffle.lolchatapi.listeners.ChatListener;
 import com.github.theholywaffle.lolchatapi.listeners.FriendListener;
 import com.github.theholywaffle.lolchatapi.wrapper.Friend;
@@ -28,6 +30,7 @@ import com.spielpark.steve.leaguechat.chatpage.actChatPage;
 import com.spielpark.steve.leaguechat.mainpage.actMainPage;
 import com.spielpark.steve.leaguechat.mainpage.friendinfo.FriendInfo;
 import com.spielpark.steve.leaguechat.mainpage.friendinfo.FriendsAdapter;
+import com.spielpark.steve.leaguechat.usersettings.Settings;
 
 import org.jivesoftware.smack.SmackException;
 
@@ -45,6 +48,8 @@ public class ChatService extends IntentService {
     public static StringBuilder pendingFriends = new StringBuilder();
     public static Friend updated;
     public static Friend updated2;
+    private static ChatListener chatListener;
+    private static FriendListener friendListener;
     public ChatService() {
         super(ChatService.class.getName());
     }
@@ -78,6 +83,13 @@ public class ChatService extends IntentService {
                 pendingFriends.setLength(0);
                 Log.d("ChSrv/onHandleIntent", "Notification cleared by user.");
             }
+            case "REMOVE_NOTIFICATION" : {
+                String name = intent.getExtras().getString("name");
+                if (pendingFriends.toString().contains(name)) {
+                    pendingFriends.setLength(0);
+                    ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).cancel(256);
+                }
+            }
         }
     }
 
@@ -95,6 +107,8 @@ public class ChatService extends IntentService {
     private void handleLogout() {
         try {
             api.disconnect();
+            api.removeChatListener(chatListener);
+            api.removeFriendListener(friendListener );
         } catch (SmackException.NotConnectedException e) {
             e.printStackTrace();
         }
@@ -117,24 +131,29 @@ public class ChatService extends IntentService {
         toSend.sendMessage(message);
     }
 
-    private void receiveMessage(String from, String message) {
+    private void receiveMessage(Friend from, String message) {
         MessageDB db = MessageDB.getInstance(this);
         SQLiteDatabase write = db.getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put(MessageDB.TableEntry.COLUMN_TO, ChatService.getUserName());
-        cv.put(MessageDB.TableEntry.COLUMN_FROM, from);
+        cv.put(MessageDB.TableEntry.COLUMN_FROM, from.getName());
         cv.put(MessageDB.TableEntry.COLUMN_MESSAGE, message);
         cv.put(MessageDB.TableEntry.COLUMN_TIME, System.currentTimeMillis());
+        cv.put(MessageDB.TableEntry.COLUMN_PROFILE, from.getStatus().getProfileIconId());
         write.insert(MessageDB.TableEntry.TABLE_NAME, null, cv);
-        makeNotification(from, message);
+        makeNotification(from.getName(), message);
         for (FriendInfo inf : FriendsAdapter.getInfo()) {
             if (inf.getName().equals(from) && !(inf.isPendingMessage())) {
-                Log.d("aMP/receiveMessage", "Pending message for: " + from);
+                Log.d("aMP/receiveMessage", "Pending message for: " + from.getName());
                 inf.setPendingMessage(true);
                 break;
             }
         }
         sendBroadcast("message_received");
+    }
+
+    public static void setStatus(LolStatus l) {
+        api.setStatus(l);
     }
 
     private void makeNotification(String from, String message) {
@@ -151,7 +170,7 @@ public class ChatService extends IntentService {
         PendingIntent pIntent = stack.getPendingIntent(0, PendingIntent.FLAG_CANCEL_CURRENT);
         Intent broadcastIntent = new Intent(this, ChatService.class);
         broadcastIntent.setAction("NOTIFICATION_REMOVED");
-        PendingIntent pIntentBroadcast = PendingIntent.getService(this, 512, broadcastIntent,PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pIntentBroadcast = PendingIntent.getService(this, 512, broadcastIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         NotificationCompat.Builder bldr = new NotificationCompat.Builder(this)
                 .setAutoCancel(true)
                 .setContentText(multiple ? pendingFriends.append(", ").append(from) : message.length() > 30 ? message.substring(0, 29) + "..." : message)
@@ -174,20 +193,21 @@ public class ChatService extends IntentService {
         if (api == null) {
             throw new NullPointerException("API has not been initialized.");
         }
-        api.addChatListener(new ChatListener() {
+        chatListener = new ChatListener() {
             @Override
             public void onMessage(Friend friend, String message) {
                 sendBroadcast("message_received", friend.getName());
-                receiveMessage(friend.getName(), message);
+                receiveMessage(friend, message);
             }
-        });
+        };
+        api.addChatListener(chatListener);
     }
 
     private void setupFriendsListener() {
         if (api == null) {
             throw new NullPointerException("API has not been initialized.");
         }
-        api.addFriendListener(new FriendListener() {
+        friendListener = new FriendListener() {
             @Override
             public void onFriendLeave(Friend friend) {
                 if (updated == null) {
@@ -247,7 +267,8 @@ public class ChatService extends IntentService {
                 }
                 sendBroadcast("friend_status_change", friend.getName(), "status");
             }
-        });
+        };
+        api.addFriendListener(friendListener);
     }
     private void handleLogin(final String u, final char[] pw, final ChatServer region) {
         userName = u;
@@ -271,7 +292,8 @@ public class ChatService extends IntentService {
                     if (loggedIn) {
                         sendBroadcast("login_status_update", "Logged in!");
                         api.reloadRoster();
-                        sendBroadcast("login_status_update", "Redirecting to Main Chat page..");
+                        sendBroadcast("login_status_update", "Redirecting to Main C hat page..");
+                        Settings.updateStatus();
                         sendBroadcast("login_transition");
                     }
                 } catch (IOException e) {
