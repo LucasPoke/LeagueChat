@@ -37,6 +37,7 @@ public class FriendsInfoTask extends AsyncTask {
     protected void onPostExecute(Object o) {
         super.onPostExecute(o);
         List<FriendInfo> infos = reader.getFriendInfo();
+        reader.finish();
         FriendsAdapter adapter = new FriendsAdapter(ctx, infos, inflater);
         view.setAdapter(adapter);
         actMainPage.mAdapter = adapter;
