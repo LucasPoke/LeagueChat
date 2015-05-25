@@ -2,6 +2,7 @@ package com.spielpark.steve.leaguechat;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.LinearGradient;
 import android.graphics.Shader;
@@ -21,6 +22,7 @@ import android.widget.TextView;
 
 import com.github.theholywaffle.lolchatapi.ChatServer;
 import com.spielpark.steve.leaguechat.news.NewsTask;
+import com.spielpark.steve.leaguechat.usersettings.Settings;
 
 import java.util.ArrayList;
 
@@ -29,6 +31,15 @@ public class actLogin extends Activity {
     @SuppressWarnings("FieldCanBeLocal")
     private final int NUM_ARTICLES = 8;
     private final ArrayList<String> regions = new ArrayList<>();
+
+    @Override
+    public void onBackPressed() {
+        Intent startMain = new Intent(Intent.ACTION_MAIN);
+        startMain.addCategory(Intent.CATEGORY_HOME);
+        startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(startMain);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,6 +56,7 @@ public class actLogin extends Activity {
     }
 
     public void beginLogin(View v) {
+        Settings.init(getSharedPreferences(Settings.USER_SETTINGS, MODE_PRIVATE));
         String user = ((EditText) findViewById(R.id.et_enter_username)).getText().toString();
         char[] password = ((EditText) findViewById(R.id.et_enter_password)).getText().toString().toCharArray();
         ((EditText)findViewById(R.id.et_enter_password)).setText("");
