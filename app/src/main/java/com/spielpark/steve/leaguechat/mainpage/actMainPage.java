@@ -41,6 +41,7 @@ import com.spielpark.steve.leaguechat.mainpage.friendinfo.FriendInfo;
 import com.spielpark.steve.leaguechat.mainpage.friendinfo.FriendsAdapter;
 import com.spielpark.steve.leaguechat.mainpage.friendinfo.FriendsInfoTask;
 import com.spielpark.steve.leaguechat.service.ChatService;
+import com.spielpark.steve.leaguechat.usersettings.actProfSettings;
 import com.spielpark.steve.leaguechat.util.Util;
 
 import java.security.Timestamp;
@@ -236,13 +237,7 @@ public class actMainPage extends ActionBarActivity {
                     ChatService.updated2 = null;
                     break;
                 }
-                case "message_received" : {
-                    Log.d("aMP/receiveMessage", "Received Message From: " + intent.getExtras().getString("arg0"));
-                    //receiveMessage(intent.getExtras().getString("arg0"));
-                    break;
-                }
                 case "refresh_list" : {
-                    Log.d("aMP/receiveMessage", "Refreshing mAdapter");
                     mAdapter.notifyDataSetChanged();
                     break;
                 }
@@ -254,34 +249,22 @@ public class actMainPage extends ActionBarActivity {
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main_page, menu);
+        getSupportActionBar().setTitle(ChatService.getUserName());
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
         if (id == android.R.id.home) {
             onBackPressed();
         }
+        if (id == R.id.action_settings) {
+            Intent intent = new Intent(this, actProfSettings.class);
+            startActivity(intent);
+        }
         return true;
     }
-
-    public static View getViewByPosition(int pos, ListView listView) {
-        final int firstListItemPosition = listView.getFirstVisiblePosition();
-        final int lastListItemPosition = firstListItemPosition + listView.getChildCount() - 1;
-
-        if (pos < firstListItemPosition || pos > lastListItemPosition ) {
-            return listView.getAdapter().getView(pos, null, listView);
-        } else {
-            final int childIndex = pos - firstListItemPosition;
-            return listView.getChildAt(childIndex);
-        }
-    }
-
 }
