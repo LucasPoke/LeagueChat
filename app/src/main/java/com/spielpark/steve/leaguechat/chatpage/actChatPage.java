@@ -16,6 +16,7 @@ import android.widget.EditText;
 
 import com.spielpark.steve.leaguechat.R;
 import com.spielpark.steve.leaguechat.service.ChatService;
+import com.spielpark.steve.leaguechat.usersettings.Settings;
 
 public class actChatPage extends ListActivity {
     private static ChatAdapter mAdapter;
@@ -62,7 +63,6 @@ public class actChatPage extends ListActivity {
     }
 
     private void setUpReceiver() {
-        Log.d("actMainPage", "Setting up receiver.");
         receiver = new ChatReceiver();
         IntentFilter filter = new IntentFilter();
         filter.addAction("friend_status_change");
@@ -92,6 +92,7 @@ public class actChatPage extends ListActivity {
         cv.put(MessageDB.TableEntry.COLUMN_TO, friendName);
         cv.put(MessageDB.TableEntry.COLUMN_MESSAGE, msg);
         cv.put(MessageDB.TableEntry.COLUMN_TIME, System.currentTimeMillis());
+        cv.put(MessageDB.TableEntry.COLUMN_PROFILE, Settings.getUserPic());
         db.getWritableDatabase().insert(MessageDB.TableEntry.TABLE_NAME, null, cv);
         mAdapter.swapCursor(ChatService.queryDB(friendName, this));
         mAdapter.notifyDataSetChanged();
