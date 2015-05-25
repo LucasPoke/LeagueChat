@@ -20,10 +20,11 @@ public class MessageDB extends SQLiteOpenHelper {
             TableEntry.COLUMN_FROM + " varchar, " +
             TableEntry.COLUMN_TO + " varchar, " +
             TableEntry.COLUMN_MESSAGE + " text, " +
-            TableEntry.COLUMN_TIME + " int);";
+            TableEntry.COLUMN_TIME + " int, " +
+            TableEntry.COLUMN_PROFILE + " int);";
 
     public MessageDB(Context context) {
-        super(context, TableEntry.DB_NAME, null, 16);
+        super(context, TableEntry.DB_NAME, null, 22);
         db = getWritableDatabase();
     }
 
@@ -61,5 +62,6 @@ public class MessageDB extends SQLiteOpenHelper {
         public static final String COLUMN_TO = "_to";
         public static final String COLUMN_MESSAGE = "message";
         public static final String COLUMN_TIME = "time";
+        public static final String COLUMN_PROFILE = "profilepic";
     }
 }

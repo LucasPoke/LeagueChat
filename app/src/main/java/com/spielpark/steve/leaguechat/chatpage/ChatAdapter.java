@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.spielpark.steve.leaguechat.R;
@@ -31,29 +32,37 @@ public class ChatAdapter extends CursorAdapter {
 
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
+        TextView chat;
+        ImageView profilePic;
         String from = cursor.getString(cursor.getColumnIndex(MessageDB.TableEntry.COLUMN_FROM));
         String message = cursor.getString(cursor.getColumnIndex(MessageDB.TableEntry.COLUMN_MESSAGE));
+
         GregorianCalendar cal = new GregorianCalendar();
         cal.setTimeInMillis(cursor.getLong(cursor.getColumnIndex(MessageDB.TableEntry.COLUMN_TIME)));
-        int curDay = cal.get(Calendar.DAY_OF_YEAR);
         TextView datetext = ((TextView) view.findViewById(R.id.date));
         if (cursor.getPosition() == 0 || diffDays(cursor)) {
             datetext.setVisibility(View.VISIBLE);
             datetext.setText(Util.getTimeChatFormat(cal));
-            Log.d("CA/BV", "New Date View: " + Util.getTimeChatFormat(cal));
         } else {
             datetext.setVisibility(View.GONE);
         }
-        TextView chat;
+
         if (from.equalsIgnoreCase(ChatService.getUserName())) {
             chat = (TextView) view.findViewById(R.id.rightChat);
+            profilePic = (ImageView) view.findViewById(R.id.rightPic);
             view.findViewById(R.id.leftChat).setVisibility(View.GONE);
+            view.findViewById(R.id.leftPic).setVisibility(View.GONE);
         } else {
             chat = (TextView) view.findViewById(R.id.leftChat);
+            profilePic = (ImageView) view.findViewById(R.id.leftPic);
             view.findViewById(R.id.rightChat).setVisibility(View.GONE);
+            view.findViewById(R.id.rightPic).setVisibility(View.GONE);
         }
+        profilePic.setVisibility(View.VISIBLE);
+        profilePic.setImageResource(Util.getProfileIconId(cursor.getInt(cursor.getColumnIndex(MessageDB.TableEntry.COLUMN_PROFILE))));
         chat.setVisibility(View.VISIBLE);
         chat.setText(message);
+
     }
 
     private boolean diffDays(Cursor cursor) {
@@ -63,6 +72,7 @@ public class ChatAdapter extends CursorAdapter {
         cursor.moveToPrevious();
         cal.setTimeInMillis(cursor.getLong(cursor.getColumnIndex(MessageDB.TableEntry.COLUMN_TIME)));
         int day2 = cal.get(Calendar.DAY_OF_YEAR);
+        cursor.moveToNext();
         return day2 != day1;
     }
 
