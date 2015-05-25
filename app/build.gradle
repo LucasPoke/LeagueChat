@@ -1,5 +1,4 @@
 apply plugin: 'com.android.application'
-
 android {
     compileSdkVersion 21
     buildToolsVersion "21.1.2"
@@ -8,8 +7,8 @@ android {
         applicationId "com.spielpark.steve.leaguechat"
         minSdkVersion 14
         targetSdkVersion 21
-        versionCode 8
-        versionName "0.96"
+        versionCode 9
+        versionName "0.99"
     }
     buildTypes {
         release {
