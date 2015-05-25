@@ -92,6 +92,10 @@ public class FriendsAdapter extends BaseAdapter {
             @Override
             public void onClick(final View v) {
                 Intent intent = new Intent(context, actChatPage.class);
+                Intent i2 = new Intent(context, ChatService.class);
+                i2.setAction("REMOVE_NOTIFICATION");
+                i2.putExtra("name", curFriend.getName());
+                context.startService(i2);
                 intent.putExtra("friendName", curFriend.getName());
                 curFriend.setPendingMessage(false);
                 notifyDataSetChanged();
@@ -162,7 +166,7 @@ public class FriendsAdapter extends BaseAdapter {
                 return;
             }
         }
-        AsyncTask addFriendTask = new AsyncTask<Void, Void, FriendInfo>() {
+        new AsyncTask<Void, Void, FriendInfo>() {
             @Override
             protected FriendInfo doInBackground(Void... params) {
                 return FriendInfoReader.getNewFriend(friend);
@@ -212,10 +216,6 @@ public class FriendsAdapter extends BaseAdapter {
                     return 0;
                 }
                 if (lhs.getInGame() == null || rhs.getInGame() == null) {
-                    Friend r = ChatService.getFriendByName(lhs.getName());
-                    Friend l = ChatService.getFriendByName(rhs.getName());
-                    Log.d("FriendsAdapter/sort", "COMPARISON WAS NULL: " + r.getStatus());
-                    Log.d("FriendsAdapter/sort", "COMPARISON WAS NULL: " + l.getStatus());
                     return 0;
                 }
                 int x = lhs.getInGame().order();
