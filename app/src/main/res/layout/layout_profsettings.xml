@@ -1,0 +1,123 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    tools:context="com.spielpark.steve.leaguechat.usersettings.actProfSettings"
+    android:background="@drawable/texture">
+
+    <TextView
+        android:id="@+id/txt_name"
+        android:layout_marginTop="12dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:textColor="#CCCCCC"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:text="Set Status"/>
+
+    <EditText
+        android:layout_below="@id/txt_name"
+        android:id="@+id/et_settings_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="LeagueChat with Android"
+        android:textColorHint="#AAAAAA"
+        android:textColor="#AAAAAA"
+        android:gravity="center"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="8dp"
+        android:textSize="18sp"/>
+
+    <View
+        android:id="@+id/et_divider2"
+        android:layout_below="@id/et_settings_status"
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:paddingRight="6dp"
+        android:paddingLeft="6dp"
+        android:background="#FF9F00"
+        android:layout_marginTop="14dp"/>
+
+    <GridView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:gravity="center"
+        android:id="@+id/grid_profpictures"
+        android:horizontalSpacing="4dp"
+        android:layout_below="@+id/et_divider2"
+        android:layout_above="@+id/et_divider3"
+        android:layout_marginTop="12dp"
+        android:numColumns="5"
+        android:stretchMode="columnWidth"
+        />
+
+    <View
+        android:id="@+id/et_divider3"
+        android:layout_width="fill_parent"
+        android:paddingRight="6dp"
+        android:paddingLeft="6dp"
+        android:layout_height="1dp"
+        android:background="#FF9F00"
+        android:layout_marginTop="14dp"
+        android:layout_marginBottom="72dp"
+        android:layout_alignParentBottom="true"/>
+
+    <TextView
+        android:id="@+id/txt_current"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/et_divider3"
+        android:layout_alignLeft="@id/et_divider3"
+        android:layout_marginTop="18dp"
+        android:textColor="#CCCCCC"
+        android:textSize="22sp"
+        android:text="Current\nPicture"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/img_current"
+        android:layout_toRightOf="@id/txt_current"
+        android:layout_alignTop="@id/txt_current"
+        android:layout_alignBottom="@id/txt_current"
+        android:layout_marginLeft="8dp"
+        android:src="@drawable/profile_pic0"/>
+
+    <View
+        android:id="@+id/et_divider4"
+        android:layout_width="1dp"
+        android:layout_height="96dp"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/grid_profpictures"
+        android:layout_marginTop="14dp"
+        android:background="#FF9F00"/>
+
+    <Button
+        android:layout_width="70dp"
+        android:layout_height="46dp"
+        android:id="@+id/btnCancel"
+        android:text="Cancel"
+        android:layout_alignTop="@id/img_current"
+        android:layout_toRightOf="@id/et_divider4"
+        android:layout_marginLeft="12dp"
+        android:layout_marginTop="4dp"
+        android:textSize="16sp"
+        android:background="#60C5F7"
+        android:onClick="onCancel"/>
+
+    <Button
+        android:layout_width="70dp"
+        android:layout_height="46dp"
+        android:id="@+id/btnSave"
+        android:text="Save"
+        android:layout_alignTop="@id/img_current"
+        android:layout_alignRight="@id/et_divider3"
+        android:layout_marginTop="4dp"
+        android:textSize="16sp"
+        android:background="#60C5F7"
+        android:onClick="onSave"/>
+
+</RelativeLayout>
