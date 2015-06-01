@@ -41,6 +41,7 @@ import com.spielpark.steve.leaguechat.mainpage.friendinfo.FriendInfo;
 import com.spielpark.steve.leaguechat.mainpage.friendinfo.FriendsAdapter;
 import com.spielpark.steve.leaguechat.mainpage.friendinfo.FriendsInfoTask;
 import com.spielpark.steve.leaguechat.service.ChatService;
+import com.spielpark.steve.leaguechat.usersettings.Settings;
 import com.spielpark.steve.leaguechat.usersettings.actProfSettings;
 import com.spielpark.steve.leaguechat.util.Util;
 
@@ -93,7 +94,6 @@ public class actMainPage extends ActionBarActivity {
     }
 
     private void setUpRefresh() {
-        Log.d("actMainPage/setupRefre", "activating refresher.");
         refresher = Executors.newScheduledThreadPool(1);
         refresher.scheduleAtFixedRate(new Runnable() {
             @Override
@@ -109,7 +109,6 @@ public class actMainPage extends ActionBarActivity {
     }
 
     private void setUpReceiver() {
-        Log.d("actMainPage", "Setting up receiver.");
         receiver = new ChatReceiver();
         IntentFilter filter = new IntentFilter();
         filter.addAction("friend_status_change");
@@ -124,6 +123,7 @@ public class actMainPage extends ActionBarActivity {
         friendsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.d("test", (ChatService.getFriendByName(mAdapter.getInfo().get(position).getName())).getStatus().toString());
                 actMainPage.this.displayExtendedInfo(ChatService.getFriendByName(mAdapter.getInfo().get(position).getName()));
                 FriendsAdapter.mSelected = (position == FriendsAdapter.mSelected ? -1 : position);
                 mAdapter.notifyDataSetChanged();

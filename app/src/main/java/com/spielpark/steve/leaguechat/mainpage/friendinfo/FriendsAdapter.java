@@ -143,6 +143,7 @@ public class FriendsAdapter extends BaseAdapter {
                 numOnline++;                String name = f.getName();
                 String status = f.getStatus().getStatusMessage();
                 LolStatus.GameStatus gameStatus = f.getChatMode() == ChatMode.AWAY ? LolStatus.GameStatus.AWAY : f.getStatus().getGameStatus();
+                if (gameStatus == null) gameStatus = LolStatus.GameStatus.OUT_OF_GAME;
                 int iconId = f.getStatus().getProfileIconId();
                 newList.add(new FriendInfo(name, status, fg.getName(), gameStatus, iconId, groupVal, pendingMessages.contains(name)));
             }

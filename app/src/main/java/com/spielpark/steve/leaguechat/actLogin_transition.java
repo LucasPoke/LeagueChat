@@ -31,6 +31,7 @@ public class actLogin_transition extends Activity {
             filter.addAction("login_transition");
             LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(receiver, filter);
         }
+        ((GIFView) findViewById(R.id.garen)).loadGIFResource(this, R.drawable.garen_spin);
         beginLogin();
     }
 
@@ -49,7 +50,6 @@ public class actLogin_transition extends Activity {
         intent.putExtra("region", extras.getString("region"));
         extras.remove("password");
         intent.setAction("DO_LOGIN");
-        Log.d("CHAT_SERVICE", "Starting chat service with DO_LOGIN");
         startService(intent);
     }
 
@@ -68,7 +68,6 @@ public class actLogin_transition extends Activity {
                     break;
                 }
                 case "login_transition" : {
-                    Log.d("Login_Transition", "Transitioning to mainpage..");
                     Intent trans = new Intent(actLogin_transition.this, actMainPage.class);
                     actLogin_transition.this.startActivity(trans);
                 }

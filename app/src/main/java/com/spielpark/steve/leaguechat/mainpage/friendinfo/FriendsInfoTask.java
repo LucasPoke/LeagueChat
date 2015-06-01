@@ -9,6 +9,7 @@ import android.widget.ListView;
 import com.github.theholywaffle.lolchatapi.LoLChat;
 import com.spielpark.steve.leaguechat.mainpage.actMainPage;
 import com.spielpark.steve.leaguechat.service.ChatService;
+import com.spielpark.steve.leaguechat.usersettings.Settings;
 
 import java.util.List;
 
@@ -28,7 +29,7 @@ public class FriendsInfoTask extends AsyncTask {
 
     @Override
     protected Object doInBackground(Object[] params) {
-        Log.d("FriendsInfoTask", "Opening FriendInfoReader");
+        Settings.updateStatus();
         reader = new FriendInfoReader(ChatService.getFriendGroups());
         return null;
     }

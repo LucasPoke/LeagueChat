@@ -125,6 +125,7 @@ public class LolStatus {
         gameStatus,
         isObservable,
         mobile,
+        championMasteryScore,
         rankedSoloRestricted;
         @Override
         public String toString() {
@@ -245,7 +246,7 @@ public class LolStatus {
             return 0;
         }
     }
-
+    public int getMasteryScore () { return getInt(XMLProperty.championMasteryScore);}
     public int getNormalLeaves() {
         return getInt(XMLProperty.leaves);
     }
@@ -362,6 +363,7 @@ public class LolStatus {
         setElement(XMLProperty.gameQueueType, q);
         return this;
     }
+    public void setMasteryScore (int i) { setElement(XMLProperty.championMasteryScore, i);}
     public LolStatus setGameStatus(GameStatus s) {
         setElement(XMLProperty.gameStatus, s.internal);
         return this;

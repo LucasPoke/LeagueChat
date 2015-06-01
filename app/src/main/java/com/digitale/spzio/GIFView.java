@@ -43,7 +43,6 @@ public class GIFView extends View{
             is = context.getResources().getAssets().open(filename);
             movie = Movie.decodeStream(is);
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }

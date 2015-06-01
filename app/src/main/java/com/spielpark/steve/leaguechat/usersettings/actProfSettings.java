@@ -25,6 +25,7 @@ public class actProfSettings extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_profsettings);
         setupGrid();
+        ((EditText) findViewById(R.id.et_settings_status)).setText(Settings.getUserStatus());
     }
 
     private void setupGrid() {
@@ -47,8 +48,7 @@ public class actProfSettings extends ActionBarActivity {
     }
 
     public void onSave(View v) {
-        Settings.setUserStatus(((EditText) findViewById(R.id.et_settings_status)).getText().toString());
-        Settings.setUserPic(mAdapter.getCorrectPos(mAdapter.getSelected()));
+        Settings.setUserInfo(((EditText) findViewById(R.id.et_settings_status)).getText().toString(), mAdapter.getCorrectPos(mAdapter.getSelected()));
         Intent i = new Intent(this, actMainPage.class);
         startActivity(i);}
 

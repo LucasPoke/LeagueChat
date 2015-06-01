@@ -14,4 +14,10 @@
         android:paddingTop="150dp"
         android:textSize="20dp"/>
 
+    <com.digitale.spzio.GIFView
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:id="@+id/garen"
+        android:layout_centerInParent="true"
+        />
 </RelativeLayout>

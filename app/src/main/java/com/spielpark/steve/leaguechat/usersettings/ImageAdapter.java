@@ -20,6 +20,7 @@ public class ImageAdapter extends BaseAdapter {
 
     public ImageAdapter(Context ctx) {
         this.ctx = ctx;
+        this.mSelected = getReducedPos(Settings.getUserPic());
     }
 
     @Override
@@ -60,6 +61,12 @@ public class ImageAdapter extends BaseAdapter {
     public int getCorrectPos(int pos) {
         pos = (pos < 501 && pos > 28) ? pos + 472 : pos;
         pos = (pos < 808 && pos > 795) ? pos + 12 : pos;
+        return pos;
+    }
+
+    private int getReducedPos(int pos) {
+        pos = (pos > 795) ? pos - 12 : pos;
+        pos = (pos > 500 ) ? pos - 472 : pos;
         return pos;
     }
 

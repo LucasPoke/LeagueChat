@@ -53,19 +53,19 @@ public class actLogin extends Activity {
         adapter.setDropDownViewResource(R.layout.region_item);
         ((Spinner)findViewById(R.id.region_select)).setAdapter(adapter);
         ((Spinner)findViewById(R.id.region_select)).setSelection(regions.indexOf("NA"));
+        Settings.init(getApplicationContext().getSharedPreferences(Settings.USER_SETTINGS, MODE_PRIVATE));
     }
 
     public void beginLogin(View v) {
-        Settings.init(getSharedPreferences(Settings.USER_SETTINGS, MODE_PRIVATE));
         String user = ((EditText) findViewById(R.id.et_enter_username)).getText().toString();
         char[] password = ((EditText) findViewById(R.id.et_enter_password)).getText().toString().toCharArray();
         ((EditText)findViewById(R.id.et_enter_password)).setText("");
         Intent intent = new Intent(this, actLogin_transition.class);
-        //intent.putExtra("un", NotMyPasswords.notMyUserName);
-        //intent.putExtra("pw", NotMyPasswords.notMyPassword.toCharArray());
+        intent.putExtra("un", NotMyPasswords.notMyUserName);
+        intent.putExtra("pw", NotMyPasswords.notMyPassword.toCharArray());
         intent.putExtra("region", ((Spinner)findViewById(R.id.region_select)).getSelectedItem().toString());
-        intent.putExtra("un", user);
-        intent.putExtra("pw", password);
+        //intent.putExtra("un", user);
+        //intent.putExtra("pw", password);
         startActivity(intent);
     }
 
@@ -100,6 +100,6 @@ public class actLogin extends Activity {
                 view.findViewById(R.id.lstTextView).performClick();
             }
         });
-        AsyncTask getTopPosts = new NewsTask(txtPosts, (RelativeLayout) findViewById(R.id.loadingPanel), REDDIT_POSTS, NUM_ARTICLES).execute();
+        new NewsTask(txtPosts, (RelativeLayout) findViewById(R.id.loadingPanel), REDDIT_POSTS, NUM_ARTICLES).execute();
     }
 }
