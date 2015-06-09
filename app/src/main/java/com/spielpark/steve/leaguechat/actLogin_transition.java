@@ -29,6 +29,7 @@ public class actLogin_transition extends Activity {
             IntentFilter filter = new IntentFilter();
             filter.addAction("login_status_update");
             filter.addAction("login_transition");
+            filter.addAction("login_failed");
             LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(receiver, filter);
         }
         ((GIFView) findViewById(R.id.garen)).loadGIFResource(this, R.drawable.garen_spin);
@@ -70,6 +71,10 @@ public class actLogin_transition extends Activity {
                 case "login_transition" : {
                     Intent trans = new Intent(actLogin_transition.this, actMainPage.class);
                     actLogin_transition.this.startActivity(trans);
+                    break;
+                }
+                case "login_failed" : {
+                    ((GIFView) findViewById(R.id.garen)).stop();
                 }
             }
         }

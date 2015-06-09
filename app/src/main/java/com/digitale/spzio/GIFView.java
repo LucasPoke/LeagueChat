@@ -17,6 +17,7 @@ public class GIFView extends View{
 
     Movie movie;
     long moviestart;
+    boolean stopped = false;
 
     public GIFView(Context context) throws IOException {
         super(context);
@@ -47,6 +48,11 @@ public class GIFView extends View{
         }
     }
 
+    public void stop() {
+        stopped = true;
+    }
+
+
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
@@ -54,6 +60,10 @@ public class GIFView extends View{
             return;
         }
 
+        if (stopped) {
+            movie.draw(canvas, 10, 10);
+            return;
+        }
         long now=android.os.SystemClock.uptimeMillis();
 
         if (moviestart == 0) moviestart = now;

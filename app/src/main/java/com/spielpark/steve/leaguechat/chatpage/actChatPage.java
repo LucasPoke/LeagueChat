@@ -35,15 +35,10 @@ public class actChatPage extends ListActivity {
         setListAdapter(mAdapter);
         setUpReceiver();
         getListView().smoothScrollToPosition(mAdapter.getCount());
-        findViewById(R.id.edtMessage).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.edtMessage).setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
-            public void onClick(View v) {
-                v.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        actChatPage.this.getListView().smoothScrollToPosition(actChatPage.mAdapter.getCount());
-                    }
-                }, 200);
+            public void onFocusChange(View v, boolean hasFocus) {
+                getListView().smoothScrollToPosition(cursor.getCount());
             }
         });
     }
@@ -72,7 +67,8 @@ public class actChatPage extends ListActivity {
     }
 
     private void receiveMessage() {
-        mAdapter.swapCursor(ChatService.queryDB(friendName, this));
+        cursor = ChatService.queryDB(friendName, this);
+        mAdapter.swapCursor(cursor);
         mAdapter.notifyDataSetChanged();
         getListView().smoothScrollToPosition(cursor.getCount());
     }
@@ -94,9 +90,11 @@ public class actChatPage extends ListActivity {
         cv.put(MessageDB.TableEntry.COLUMN_TIME, System.currentTimeMillis());
         cv.put(MessageDB.TableEntry.COLUMN_PROFILE, Settings.getUserPic());
         db.getWritableDatabase().insert(MessageDB.TableEntry.TABLE_NAME, null, cv);
-        mAdapter.swapCursor(ChatService.queryDB(friendName, this));
+        cursor = ChatService.queryDB(friendName, this);
+        mAdapter.swapCursor(cursor);
         mAdapter.notifyDataSetChanged();
         getListView().smoothScrollToPosition(cursor.getCount());
+        Log.d("ACP/SM", "Count: " + cursor.getCount());
     }
 
     private class ChatReceiver extends BroadcastReceiver {

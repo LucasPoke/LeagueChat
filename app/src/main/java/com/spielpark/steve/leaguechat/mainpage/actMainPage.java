@@ -155,24 +155,29 @@ public class actMainPage extends ActionBarActivity {
         ImageView championPic = (ImageView)findViewById(R.id.info_champion_pic);
         ImageView leaguePic = (ImageView)findViewById(R.id.info_league_image);
         ImageView profPic = (ImageView)findViewById(R.id.info_profile_pic);
-        String championPicSrc = status.getSkin().equals("") ? "N/A" : status.getSkin();
-        String league = status.getRankedLeagueTier().name().equals("UNRANKED") ? "wood" : status.getRankedLeagueTier().name().toLowerCase();
-        String division  = status.getRankedLeagueDivision().name().equals("NONE") ? "V" : status.getRankedLeagueDivision().name();
-        boolean inGame = ! (status.getGameStatus().internal().equals("outOfGame"));
-        fName.setText(f.getName());
-        divName.setText(status.getRankedLeagueName());
-        tier.setText(league.substring(0, 1).toUpperCase() + league.substring(1) + " " + division);
-        tier.getPaint().setShader(Util.getTierGraphics(league));
-        rankedWins.setText(Html.fromHtml("Ranked Wins: <b>" + String.valueOf(status.getRankedWins()) + "</b>"));
-        normalWins.setText(Html.fromHtml("Normal Wins: <b>" + String.valueOf(status.getNormalWins()) +"</b>"));
-        playingAs.setText(inGame ? "Playing as" : "Last played");
-        championPic.setImageResource(getImageId(this, championPicSrc.toLowerCase()));
-        time.setText(Html.fromHtml("Time: <b>" + (inGame ? new SimpleDateFormat("mm:ss").format(status.getGameTime()) + "</b>" : "00:00")));
-        gameType.setText(Html.fromHtml("Type: <b>" + status.getGameQueueType().desc() + "</b>"));
-        lastPlayed.setText(championPicSrc);
-        leaguePic.setImageResource(getImageId(this, league));
-        profPic.setImageResource(Util.getProfileIconId(status.getProfileIconId()));
-        findViewById(R.id.info_view).setVisibility(View.VISIBLE);
+        try {
+            String championPicSrc = status.getSkin().equals("") ? "N/A" : status.getSkin();
+            String league = status.getRankedLeagueTier().name().equals("UNRANKED") ? "wood" : status.getRankedLeagueTier().name().toLowerCase();
+            String division = status.getRankedLeagueDivision().name().equals("NONE") ? "V" : status.getRankedLeagueDivision().name();
+            boolean inGame = !(status.getGameStatus().internal().equals("outOfGame"));
+            fName.setText(f.getName());
+            divName.setText(status.getRankedLeagueName());
+            tier.setText(league.substring(0, 1).toUpperCase() + league.substring(1) + " " + division);
+            tier.getPaint().setShader(Util.getTierGraphics(league));
+            rankedWins.setText(Html.fromHtml("Ranked Wins: <b>" + String.valueOf(status.getRankedWins()) + "</b>"));
+            normalWins.setText(Html.fromHtml("Normal Wins: <b>" + String.valueOf(status.getNormalWins()) + "</b>"));
+            playingAs.setText(inGame ? "Playing as" : "Last played");
+            championPic.setImageResource(getImageId(this, championPicSrc.toLowerCase()));
+            time.setText(Html.fromHtml("Time: <b>" + (inGame ? new SimpleDateFormat("mm:ss").format(status.getGameTime()) + "</b>" : "00:00")));
+            gameType.setText(Html.fromHtml("Type: <b>" + status.getGameQueueType().desc() + "</b>"));
+            lastPlayed.setText(championPicSrc);
+            leaguePic.setImageResource(getImageId(this, league));
+            profPic.setImageResource(Util.getProfileIconId(status.getProfileIconId()));
+            findViewById(R.id.info_view).setVisibility(View.VISIBLE);
+        } catch (NullPointerException e) {
+            fName.setText("Unable To Display Info");
+            e.printStackTrace();
+        }
     }
 
     private int getImageId(Context context, String imageName) {

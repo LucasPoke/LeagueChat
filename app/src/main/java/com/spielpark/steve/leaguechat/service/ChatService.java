@@ -80,7 +80,7 @@ public class ChatService extends IntentService {
             }
             case "NOTIFICATION_REMOVED" : {
                 pendingFriends.setLength(0);
-                Log.d("ChSrv/onHandleIntent", "Notification cleared by user.");
+                break;
             }
             case "REMOVE_NOTIFICATION" : {
                 String name = intent.getExtras().getString("name");
@@ -294,6 +294,10 @@ public class ChatService extends IntentService {
                         sendBroadcast("login_status_update", "Redirecting to Main Chat page..");
                         Settings.updateStatus();
                         sendBroadcast("login_transition");
+                    }
+                    else {
+                        sendBroadcast("login_status_update", "Unable to Login \n(incorrect password?)");
+                        sendBroadcast("login_failed");
                     }
                 } catch (IOException e) {
                     e.printStackTrace();

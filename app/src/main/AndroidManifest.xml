@@ -57,6 +57,7 @@
         <activity
             android:name=".usersettings.actProfSettings"
             android:label="@string/title_activity_act_prof_settings"
+            android:windowSoftInputMode="stateHidden"
             android:parentActivityName=".mainpage.actMainPage"
             android:screenOrientation="portrait" >
             <meta-data
