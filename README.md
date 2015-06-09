@@ -29,7 +29,7 @@ This project would not be anywhere near what it is without support from the foll
 * Stibbs - Somehow manages to put up with me, but consistently available for feedback and forced testing. <3 
 
 ### Version
-0.91
+0.999
 
 ### Contact 
 You can find me on the following platforms:
