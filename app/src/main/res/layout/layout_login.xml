@@ -110,7 +110,7 @@
             android:textColor="#CCCCCC"
             android:inputType="textPassword"
             android:selectAllOnFocus="true"
-            android:maxLength="16"
+            android:maxLength="24"
             android:layout_toRightOf="@+id/password"
             android:layout_alignTop="@+id/password"/>
     </RelativeLayout>
