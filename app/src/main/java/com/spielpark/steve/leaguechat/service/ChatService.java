@@ -292,6 +292,7 @@ public class ChatService extends IntentService {
                         sendBroadcast("login_status_update", "Logged in!");
                         api.reloadRoster();
                         sendBroadcast("login_status_update", "Redirecting to Main Chat page..");
+                        if (!(Settings.isInit())) Settings.init(getApplicationContext().getSharedPreferences(Settings.USER_SETTINGS, MODE_PRIVATE));
                         Settings.updateStatus();
                         sendBroadcast("login_transition");
                     }
