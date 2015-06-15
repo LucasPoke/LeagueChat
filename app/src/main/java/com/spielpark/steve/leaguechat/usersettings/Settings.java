@@ -31,6 +31,10 @@ public class Settings {
     }
 
 
+    public static boolean isInit() {
+        return preferences != null;
+    }
+
     public static int getUserPic() {
         return preferences.getInt(USER_PIC, 8);
     }
