@@ -123,7 +123,6 @@ public class actMainPage extends ActionBarActivity {
         friendsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.d("test", (ChatService.getFriendByName(mAdapter.getInfo().get(position).getName())).getStatus().toString());
                 actMainPage.this.displayExtendedInfo(ChatService.getFriendByName(mAdapter.getInfo().get(position).getName()));
                 FriendsAdapter.mSelected = (position == FriendsAdapter.mSelected ? -1 : position);
                 mAdapter.notifyDataSetChanged();
