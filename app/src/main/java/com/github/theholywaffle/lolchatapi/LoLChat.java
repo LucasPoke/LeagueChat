@@ -60,6 +60,9 @@ public class LoLChat {
     private Presence.Type type = Presence.Type.available;
     private Presence.Mode mode = Presence.Mode.chat;
 
+    private ChatConnection chatConnection;
+    private FriendSearch friendSearch;
+
     /**
      * Represents a single connection to a League of Legends chatserver.
      *
@@ -69,8 +72,7 @@ public class LoLChat {
      *                             requests causes the name of the new friend to be null.
      */
     public LoLChat(ChatServer server, boolean acceptFriendRequests) throws IOException {
-        Roster.setDefaultSubscriptionMode(
-                acceptFriendRequests ? SubscriptionMode.accept_all : SubscriptionMode.manual);
+        Roster.setDefaultSubscriptionMode(acceptFriendRequests ? SubscriptionMode.accept_all : SubscriptionMode.manual);
         ConnectionConfiguration config = new ConnectionConfiguration(server.host, 5223, "pvp.net");
         SASLAuthentication.supportSASLMechanism("PLAIN");
         SASLAuthentication.supportSASLMechanism("KERBEROS_V4");
@@ -116,6 +118,11 @@ public class LoLChat {
             Log.wtf("debug", "Failed to connect to " + connection.getHost(), e);
         }
         addListeners();
+
+        chatConnection = new ChatConnection (connection);
+        friendSearch = new FriendSearch (connection);
+
+
         new Thread(new Runnable() {
 
             @Override
@@ -129,6 +136,56 @@ public class LoLChat {
             }
         }).start();
     }
+
+
+    //__________metodos relacionados a login (implementados pela classe ChatConnection)
+
+    public void disconnect() throws SmackException.NotConnectedException {
+        chatConnection.disconnect();
+    }
+
+    public boolean login(String username, String password) throws IOException {
+        return chatConnection.login(username, password);
+    }
+
+
+    //__________metodos relacionados a busca de amigos (implementados pela classe FriendSeach)
+
+
+    public FriendGroup getDefaultFriendGroup() {
+        return friendSearch.getDefaultFriendGroup();
+    }
+
+    public Friend getFriendById(String xmppAddress) {
+        return friendSearch.getFriendById(xmppAddress);
+    }
+
+    public Friend getFriendByName(String name) {
+        return friendSearch.getFriendByName(name);
+    }
+
+    public FriendGroup getFriendGroupByName(String name) {
+        return friendSearch.getFriendGroupByName(name);
+    }
+
+    public List<FriendGroup> getFriendGroups() {
+        return friendSearch.getFriendGroups();
+    }
+
+    public List<Friend> getFriends() {
+        return friendSearch.getFriends();
+    }
+
+    public List<Friend> getOfflineFriends() {
+        return friendSearch.getOfflineFriends();
+    }
+
+    public List<Friend> getOnlineFriends() {
+        return friendSearch.getOnlineFriends();
+    }
+
+
+    //__________metodos relacionados a listeners
 
     /**
      * Adds a ChatListener that listens to messages from all your friends.
@@ -234,163 +291,6 @@ public class LoLChat {
     }
 
     /**
-     * Disconnects from chatserver and releases all resources.
-     */
-    public void disconnect() throws SmackException.NotConnectedException {
-        connection.disconnect();
-        stop = true;
-    }
-
-    public static SmackAndroid init(Context context) {
-        return SmackAndroid.init(context);
-    }
-
-    /**
-     * @return default FriendGroup
-     */
-    public FriendGroup getDefaultFriendGroup() {
-        return getFriendGroupByName("**Default");
-    }
-
-    /**
-     * Gets your friend based on his XMPPAddress
-     *
-     * @param xmppAddress For example sum12345678@pvp.net
-     * @return The corresponding Friend or null if user is not found or he is
-     * not a friend of you
-     */
-    public Friend getFriendById(String xmppAddress) {
-        return new Friend(this, connection,
-                connection.getRoster().getEntry(StringUtils.parseBareAddress(xmppAddress)));
-    }
-
-    /**
-     * Gets a friend based on his name. The name is case insensitive.
-     *
-     * @param name The name of your friend, for example "Dyrus"
-     * @return The corresponding Friend object or null if user is not found or
-     * he is not a friend of you
-     */
-    public Friend getFriendByName(String name) {
-        for (Friend f : getFriends()) {
-            if (f.getName().equalsIgnoreCase(name)) {
-                return f;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Get a FriendGroup by name, for example "Duo Partners". The name is case
-     * sensitive!
-     *
-     * @param name The name of your group
-     * @return The corresponding FriendGroup or null if not found
-     */
-    public FriendGroup getFriendGroupByName(String name) {
-        RosterGroup g = connection.getRoster().getGroup(name);
-        if (g != null) {
-            return new FriendGroup(this, connection, g);
-        }
-        return null;
-    }
-
-    /**
-     * Get all your FriendGroups
-     *
-     * @return A List of all your FriendGroups
-     */
-    public List<FriendGroup> getFriendGroups() {
-        ArrayList<FriendGroup> groups = new ArrayList<>();
-        for (RosterGroup g : connection.getRoster().getGroups()) {
-            groups.add(new FriendGroup(this, connection, g));
-        }
-        return groups;
-    }
-
-    /**
-     * Get all your friends, both online and offline
-     *
-     * @return A List of all your Friends
-     */
-    public List<Friend> getFriends() {
-        ArrayList<Friend> friends = new ArrayList<>();
-        for (RosterEntry e : connection.getRoster().getEntries()) {
-            friends.add(new Friend(this, connection, e));
-        }
-        return friends;
-    }
-
-    /**
-     * Get all your friends who are offline.
-     *
-     * @return A list of all your offline Friends
-     */
-    public List<Friend> getOfflineFriends() {
-        List<Friend> f = getFriends();
-        Iterator<Friend> i = f.iterator();
-        while (i.hasNext()) {
-            Friend friend = i.next();
-            if (friend.isOnline()) {
-                i.remove();
-            }
-        }
-        return f;
-    }
-
-    /**
-     * Get all your friends who are online.
-     *
-     * @return A list of all your online Friends
-     */
-    public List<Friend> getOnlineFriends() {
-        List<Friend> f = getFriends();
-        Iterator<Friend> i = f.iterator();
-        while (i.hasNext()) {
-            Friend friend = i.next();
-            if (!friend.isOnline()) {
-                i.remove();
-            }
-        }
-        return f;
-    }
-
-    /**
-     * Logs in to the chat server without replacing the official connection of
-     * the League of Legends client. This call is asynchronous.
-     *
-     * @return true if login is successful, otherwise false
-     */
-    public boolean login(String username, String password) throws IOException {
-        return login(username, password, false);
-    }
-
-    /**
-     * Logs in to the chat server. This call is asynchronous.
-     *
-     * @param replaceLeague True will disconnect you account from the League of Legends
-     *                      client. False allows you to have another connection next to
-     *                      the official connection in the League of Legends client.
-     * @return True if login was successful
-     */
-    public boolean login(String username, String password, boolean replaceLeague)
-            throws IOException {
-        connection.setPacketReplyTimeout(60000);
-        try {
-            if (replaceLeague) {
-                connection.login(username, "AIR_" + password, "xiff");
-            } else {
-                connection.login(username, "AIR_" + password);
-            }
-        } catch (SASLErrorException e) {
-            return Boolean.FALSE; //Wrong credentials
-        } catch (XMPPException | SmackException e) {
-            Log.wtf("debug", e);
-        }
-        return connection.isAuthenticated();
-    }
-
-    /**
      * Removes the ChatListener from the list and will no longer be called.
      */
     public void removeChatListener(ChatListener chatListener) {
@@ -403,6 +303,8 @@ public class LoLChat {
     public void removeFriendListener(FriendListener friendListener) {
         friendListeners.remove(friendListener);
     }
+
+    //_________metodos relacionados a updates no status
 
     /**
      * Changes your ChatMode (e.g. ingame, away, available)
@@ -452,6 +354,13 @@ public class LoLChat {
         } catch (SmackException.NotConnectedException e) {
             Log.wtf("debug", "e");
         }
+    }
+
+
+    //__________metodos relacionados a smack
+
+    public static SmackAndroid init(Context context) {
+        return SmackAndroid.init(context);
     }
 
     public void reloadRoster() {
