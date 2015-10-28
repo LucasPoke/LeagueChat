@@ -206,67 +206,7 @@ public class ChatService extends IntentService {
         if (api == null) {
             throw new NullPointerException("API has not been initialized.");
         }
-        friendListener = new FriendListener() {
-            @Override
-            public void onFriendLeave(Friend friend) {
-                if (updated == null) {
-                    updated = friend;
-                } else {
-                    updated2 = friend;
-                }
-                sendBroadcast("friend_status_change", friend.getName(), "leave");
-            }
-
-            @Override
-            public void onFriendJoin(Friend friend) {
-                if (updated == null) {
-                    updated = friend;
-                } else {
-                    updated2 = friend;
-                }
-                sendBroadcast("friend_status_change", friend.getName(), "join");
-            }
-
-            @Override
-            public void onFriendAvailable(Friend friend) {
-                if (updated == null) {
-                    updated = friend;
-                } else {
-                    updated2 = friend;
-                }
-                sendBroadcast("friend_status_change", friend.getName(), "available");
-            }
-
-            @Override
-            public void onFriendAway(Friend friend) {
-                if (updated == null) {
-                    updated = friend;
-                } else {
-                    updated2 = friend;
-                }
-                sendBroadcast("friend_status_change", friend.getName(), "away");
-            }
-
-            @Override
-            public void onFriendBusy(Friend friend) {
-                if (updated == null) {
-                    updated = friend;
-                } else {
-                    updated2 = friend;
-                }
-                sendBroadcast("friend_status_change", friend.getName(), "busy");
-            }
-
-            @Override
-            public void onFriendStatusChange(Friend friend) {
-                if (updated == null) {
-                    updated = friend;
-                } else {
-                    updated2 = friend;
-                }
-                sendBroadcast("friend_status_change", friend.getName(), "status");
-            }
-        };
+        friendListener = new FriendListenerImpl();
         api.addFriendListener(friendListener);
     }
     private void handleLogin(final String u, final char[] pw, final ChatServer region) {
